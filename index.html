@@ -1,68 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Langrain's Personal Blog</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        header {
-            text-align: center;
-            padding: 50px 0;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-        }
-        h1 { margin: 0; color: #2c3e50; }
-        .subtitle { color: #7f8c8d; font-size: 1.1em; }
-        .post-card {
-            background: white;
-            padding: 25px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .date { color: #999; font-size: 0.9em; display: block; margin-bottom: 10px; }
-        a { color: #3498db; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        footer { text-align: center; margin-top: 50px; color: #777; font-size: 0.8em; }
-    </style>
+    <meta name="description" content="Langrain的个人博客 - 分享技术、思想和生活">
+    <meta name="keywords" content="博客,编程,技术,开发者">
+    <meta name="author" content="Langrain">
+    <title>Langrain - 个人博客</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <span class="site-title">Langrain's Blog</span>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link">Home</a></li>
+                <li><a href="#articles" class="nav-link">Articles</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+                <li><input type="text" placeholder="Search" class="search-box"></li>
+            </ul>
+        </div>
+    </nav>
 
-    <header>
-        <h1>Hello, I'm Langrain 👋</h1>
-        <p class="subtitle">Developer | Writer | Tech Enthusiast</p>
+    <!-- 页面标题 -->
+    <header class="page-header">
+        <h1>Langrain's Blog</h1>
     </header>
 
-    <main>
-        <!-- Article 1 -->
-        <article class="post-card">
-            <span class="date">October 24, 2023</span>
-            <h2><a href="#">My First Post on GitHub Pages</a></h2>
-            <p>Welcome to my personal website! I built this using simple HTML and CSS hosted directly on GitHub. It's fast, free, and easy to maintain.</p>
-        </article>
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 左侧：关于我 -->
+        <aside class="sidebar left-sidebar">
+            <h2>About me</h2>
+            <p>Welcome to my personal tech blog.</p>
+            <p>I am a full-stack developer in Beijing, China.</p>
+            <p><span class="highlight">Contact me</span> for any questions about web development, JavaScript, Python, Docker and Linux :)</p>
+            
+            <h3>Recent Blog Posts</h3>
+            <ul class="recent-posts">
+                <li><a href="#">My First Post on GitHub Pages</a></li>
+                <li><a href="#">Why I Love Coding</a></li>
+                <li><a href="#">Web Development Tips</a></li>
+            </ul>
+        </aside>
 
-        <!-- Article 2 -->
-        <article class="post-card">
-            <span class="date">September 15, 2023</span>
-            <h2><a href="#">Why I Love Coding</a></h2>
-            <p>Coding is like solving a puzzle every day. In this post, I share my journey into software development and the tools I use daily.</p>
-        </article>
-    </main>
+        <!-- 中间：文章列表 -->
+        <main class="content">
+            <section id="articles" class="articles-section">
+                <h2>Latest Articles</h2>
+                
+                <article class="post">
+                    <h3 class="post-title"><a href="#">My First Post on GitHub Pages</a></h3>
+                    <div class="post-meta">
+                        <span class="date">October 24, 2023</span>
+                        <span class="category">Technology</span>
+                    </div>
+                    <p class="post-excerpt">Welcome to my personal website! I built this using simple HTML and CSS hosted directly on GitHub. It's fast, free, and easy to maintain.</p>
+                    <a href="#" class="read-more">Read More →</a>
+                </article>
 
-    <footer>
-        <p>&copy; 2023 Langrain. Built with ❤️ on GitHub.</p>
+                <article class="post">
+                    <h3 class="post-title"><a href="#">Why I Love Coding</a></h3>
+                    <div class="post-meta">
+                        <span class="date">September 15, 2023</span>
+                        <span class="category">Life</span>
+                    </div>
+                    <p class="post-excerpt">Coding is like solving a puzzle every day. In this post, I share my journey into software development and the tools I use daily.</p>
+                    <a href="#" class="read-more">Read More →</a>
+                </article>
+
+                <article class="post">
+                    <h3 class="post-title"><a href="#">Web Development Tips</a></h3>
+                    <div class="post-meta">
+                        <span class="date">August 30, 2023</span>
+                        <span class="category">Technology</span>
+                    </div>
+                    <p class="post-excerpt">10 essential tips for modern web development. Learn best practices and techniques to write better code and improve productivity.</p>
+                    <a href="#" class="read-more">Read More →</a>
+                </article>
+
+                <article class="post">
+                    <h3 class="post-title"><a href="#">Getting Started with Docker</a></h3>
+                    <div class="post-meta">
+                        <span class="date">August 10, 2023</span>
+                        <span class="category">DevOps</span>
+                    </div>
+                    <p class="post-excerpt">A comprehensive guide to Docker containers. Understand containerization and how to use Docker for development and deployment.</p>
+                    <a href="#" class="read-more">Read More →</a>
+                </article>
+            </section>
+        </main>
+
+        <!-- 右侧：项目 -->
+        <aside class="sidebar right-sidebar">
+            <h2>My Projects</h2>
+            <ul class="projects-list">
+                <li><a href="https://github.com/langrain" target="_blank">GitHub Page</a> my github homepage</li>
+                <li><a href="#" target="_blank">Personal Blog</a> this blog site</li>
+                <li><a href="#" target="_blank">Open Source</a> my open source projects</li>
+                <li><a href="#" target="_blank">Portfolio</a> my portfolio website</li>
+            </ul>
+
+            <h2>Categories</h2>
+            <ul class="categories-list">
+                <li><a href="#">Technology</a></li>
+                <li><a href="#">Life</a></li>
+                <li><a href="#">DevOps</a></li>
+                <li><a href="#">Travel</a></li>
+            </ul>
+
+            <h2>Tags</h2>
+            <div class="tags-cloud">
+                <a href="#" class="tag">JavaScript</a>
+                <a href="#" class="tag">Python</a>
+                <a href="#" class="tag">Web Development</a>
+                <a href="#" class="tag">Docker</a>
+                <a href="#" class="tag">Linux</a>
+                <a href="#" class="tag">Git</a>
+                <a href="#" class="tag">React</a>
+                <a href="#" class="tag">Node.js</a>
+            </div>
+        </aside>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; 2023-2024 Langrain. All rights reserved.</p>
+        <p>Built with ❤️ using pure HTML, CSS and JavaScript</p>
     </footer>
 
+    <script src="script.js"></script>
 </body>
 </html>
