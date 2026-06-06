@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /.git/
+
+# 爬虫延迟
+Crawl-delay: 1
+
+# 网站地图
+Sitemap: https://langrain.github.io/sitemap.xml
