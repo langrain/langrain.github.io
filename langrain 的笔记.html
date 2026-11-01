@@ -1,0 +1,785 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>langrain 的笔记</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap">
+<style>
+/* 版式：顶部一句话 + 一条提交历史。文章按时间倒序排在左侧的分支图旁边，分支对应主题（数据库 / 排查 / 前端 / 杂记）。 */
+:root {
+  --bg: #EEF0ED;
+  --ink: #1B221F;
+  --muted: #66706A;
+  --line: #CBD1CB;
+  --accent: #2B45C8;
+  --l0: #5F6B65;
+  --l1: #2B45C8;
+  --l2: #C2470F;
+  --l3: #0E8466;
+  --code-bg: #E3E7E2;
+  --code-ink: #1B221F;
+  --code-cmt: #76807A;
+  --code-str: #9A3A12;
+  --f-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  --f-serif: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --measure: 42rem;
+  --rail-pad: 88px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141917;
+    --ink: #E1E7E3;
+    --muted: #8C9791;
+    --line: #2D3632;
+    --accent: #8CA0FF;
+    --l0: #9AA69F;
+    --l1: #8CA0FF;
+    --l2: #F29559;
+    --l3: #42CDA4;
+    --code-bg: #1B2220;
+    --code-ink: #E1E7E3;
+    --code-cmt: #7E8984;
+    --code-str: #F0A97C;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141917;
+  --ink: #E1E7E3;
+  --muted: #8C9791;
+  --line: #2D3632;
+  --accent: #8CA0FF;
+  --l0: #9AA69F;
+  --l1: #8CA0FF;
+  --l2: #F29559;
+  --l3: #42CDA4;
+  --code-bg: #1B2220;
+  --code-ink: #E1E7E3;
+  --code-cmt: #7E8984;
+  --code-str: #F0A97C;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.7 var(--f-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .3s, color .3s;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+::selection { background: color-mix(in srgb, var(--accent) 28%, transparent); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+button { font: inherit; color: inherit; }
+
+.shell {
+  padding-block: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: clip;
+}
+.wrap { max-width: 56rem; margin: 0 auto; }
+
+/* 顶栏 */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 12;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; background: var(--bg);
+  border-bottom: 1px solid transparent;
+  transition: border-color .25s, background-color .3s;
+}
+.top.stuck { border-bottom-color: var(--line); }
+.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font: 700 17px/1 var(--f-serif); }
+.brand svg rect { transition: transform .3s cubic-bezier(.3,1.5,.5,1); transform-box: fill-box; transform-origin: 50% 100%; }
+.brand:hover svg rect:nth-child(1) { transform: scaleY(.7); }
+.brand:hover svg rect:nth-child(2) { transform: scaleY(1.3); }
+.brand:hover svg rect:nth-child(3) { transform: scaleY(.85); }
+.nav { display: flex; align-items: center; gap: 22px; }
+.nav a { text-decoration: none; font-size: 14.5px; color: var(--muted); transition: color .2s; }
+.nav a:hover { color: var(--ink); }
+.theme {
+  width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer;
+  background: transparent; border: 1px solid var(--line); border-radius: 6px; color: var(--muted);
+  transition: color .2s, border-color .2s;
+}
+.theme:hover { color: var(--ink); border-color: var(--muted); }
+.theme svg { transition: transform .5s cubic-bezier(.3,1.4,.5,1); }
+.theme.flip svg { transform: rotate(180deg); }
+
+/* 进场 */
+#view.enter { animation: enter .4s cubic-bezier(.2,.7,.2,1); }
+@keyframes enter { from { opacity: 0; transform: translateY(10px); } }
+
+/* 首页 */
+.intro { padding: 56px 0 8px; }
+.lede {
+  margin: 0; max-width: 22em;
+  font: 700 clamp(1.65rem, 4.6vw, 2.5rem)/1.38 var(--f-serif);
+  letter-spacing: -.01em; text-wrap: balance;
+}
+.sub { margin: 18px 0 0; max-width: 36em; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  padding: 6px 13px; font-size: 14px; line-height: 1.4;
+  background: transparent; border: 1px solid var(--line); border-radius: 999px;
+  transition: background-color .2s, color .2s, border-color .2s;
+}
+.chip:hover { border-color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip .n { font: 12px/1 var(--f-mono); opacity: .6; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex: none; }
+
+.log { position: relative; margin-top: 36px; }
+.commits { list-style: none; margin: 0; padding: 18px 0 0; position: relative; }
+#graph { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+.commit {
+  position: relative; padding: 0 0 46px var(--rail-pad);
+  transition: opacity .35s;
+}
+.commit.dim { opacity: .32; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; min-height: 22px; font: 12.5px/1.2 var(--f-mono); color: var(--muted); }
+.br { display: inline-flex; align-items: center; gap: 6px; font: 13px/1.2 var(--f-sans); color: var(--ink); }
+.headb { padding: 2px 6px; border: 1px solid var(--accent); border-radius: 4px; color: var(--accent); font-size: 11px; }
+.commit h2 {
+  margin: 10px 0 8px; font: 700 clamp(1.2rem, 2.6vw, 1.5rem)/1.45 var(--f-serif);
+  text-wrap: balance; transition: transform .25s cubic-bezier(.2,.7,.2,1);
+}
+.commit:hover h2 { transform: translateX(4px); }
+.commit h2 a {
+  text-decoration: none; padding-bottom: 2px;
+  background: linear-gradient(var(--c), var(--c)) 0 100% / 0 2px no-repeat;
+  transition: background-size .35s cubic-bezier(.2,.7,.2,1);
+}
+.commit:hover h2 a, .commit h2 a:focus-visible { background-size: 100% 2px; }
+.commit h2 a::after { content: ""; position: absolute; inset: 0; }
+.sum { margin: 0; max-width: 38em; font-size: 15px; color: var(--muted); }
+.foot { margin: 10px 0 0; font: 12px/1 var(--f-mono); color: var(--muted); }
+
+/* 分支图 */
+.gp { fill: none; stroke-width: 2; stroke-linecap: round; stroke-dasharray: .1 6; opacity: .45; }
+.p { fill: none; stroke-width: 2; stroke-linecap: round; }
+.gnode { fill: none; stroke-width: 1.5; opacity: .4; }
+.node {
+  fill: var(--bg); stroke-width: 2;
+  transform-box: fill-box; transform-origin: center; transform: scale(.4); opacity: 0;
+  transition: transform .4s cubic-bezier(.3,1.6,.5,1), opacity .2s;
+}
+.node.on { transform: scale(1); opacity: 1; }
+.node.on.hot { transform: scale(1.4); }
+.pulse { fill: none; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: pulse 2.6s ease-out infinite; }
+@keyframes pulse { 0% { transform: scale(1); opacity: .7; } 70%, 100% { transform: scale(2.6); opacity: 0; } }
+#graph [data-b] { transition: opacity .35s; }
+#graph [data-b].dim { opacity: .14; }
+
+.about { margin-top: 8px; padding: 40px 0 0 var(--rail-pad); border-top: 1px solid var(--line); scroll-margin-top: 72px; }
+.about h2 { margin: 0 0 14px; font: 700 1.25rem/1.4 var(--f-serif); }
+.about p { margin: 0 0 12px; max-width: 36em; }
+.about dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 22px; margin: 22px 0 0; }
+.about dt { font: 13px/1.9 var(--f-mono); color: var(--muted); }
+.about dd { margin: 0; }
+.foot-site { padding: 56px 0 72px; font: 12px/1.6 var(--f-mono); color: var(--muted); }
+
+/* 文章 */
+#bar { position: fixed; left: 0; right: 0; top: env(safe-area-inset-top, 0px); height: 2px; z-index: 20; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+.post { position: relative; max-width: var(--measure); margin: 0 auto; padding: 36px 0 24px; }
+.back { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); text-decoration: none; transition: color .2s; }
+.back:hover { color: var(--ink); }
+.back svg { transition: transform .25s; }
+.back:hover svg { transform: translateX(-3px); }
+.post .meta { margin-top: 28px; }
+.post h1 { margin: 14px 0 14px; font: 700 clamp(1.7rem, 4.6vw, 2.4rem)/1.35 var(--f-serif); text-wrap: balance; }
+.dek { margin: 0; color: var(--muted); }
+.prose { margin-top: 40px; font: 17.5px/1.95 var(--f-serif); }
+.prose p { margin: 0 0 1.3em; }
+.prose h2 { margin: 2.1em 0 .7em; font: 700 1.3rem/1.5 var(--f-serif); scroll-margin-top: 84px; }
+.prose ul { margin: 0 0 1.3em; padding-left: 1.3em; }
+.prose li { margin: .4em 0; }
+.prose code { padding: .1em .38em; background: var(--code-bg); border-radius: 4px; font: .84em var(--f-mono); overflow-wrap: anywhere; }
+.code { margin: 1.6em 0; background: var(--code-bg); border-radius: 6px; overflow: hidden; font-family: var(--f-sans); }
+.code figcaption { display: flex; align-items: center; justify-content: space-between; padding: 5px 8px 5px 14px; border-bottom: 1px solid var(--line); font: 12px/1.6 var(--f-mono); color: var(--muted); }
+.copy { cursor: pointer; padding: 2px 9px; background: transparent; border: 1px solid transparent; border-radius: 4px; font: 12px/1.6 var(--f-sans); color: var(--muted); transition: color .2s, border-color .2s, background-color .2s; }
+.copy:hover { color: var(--ink); border-color: var(--line); }
+.copy.ok { color: var(--bg); background: var(--l3); border-color: var(--l3); }
+.code pre { margin: 0; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.7 var(--f-mono); color: var(--code-ink); tab-size: 4; }
+.cmt { color: var(--code-cmt); }
+.str { color: var(--code-str); }
+
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); }
+.pg { display: block; padding: 6px 0; text-decoration: none; }
+.pg small { display: block; font: 12px/1.8 var(--f-mono); color: var(--muted); }
+.pg b { font: 600 16px/1.5 var(--f-serif); background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .3s; }
+.pg:hover b { background-size: 100% 1px; }
+.pg.next { text-align: right; }
+.pg.next b { background-position: 100% 100%; }
+
+.toc { display: none; }
+@media (min-width: 1240px) {
+  .toc { display: block; position: absolute; left: calc(100% + 48px); top: 0; bottom: 0; width: 190px; }
+  .toc nav { position: sticky; top: 96px; }
+  .toc ul { margin: 0; padding: 0; list-style: none; border-left: 1px solid var(--line); }
+  .toc button {
+    display: block; width: 100%; margin-left: -1px; padding: 6px 0 6px 14px; text-align: left; cursor: pointer;
+    background: none; border: 0; border-left: 2px solid transparent;
+    font-size: 13px; line-height: 1.5; color: var(--muted);
+    transition: color .2s, border-color .2s;
+  }
+  .toc button:hover { color: var(--ink); }
+  .toc li.on button { color: var(--ink); border-left-color: var(--accent); }
+}
+
+@media (max-width: 520px) {
+  .intro { padding-top: 40px; }
+  .pager { grid-template-columns: 1fr; }
+  .pg.next { text-align: left; }
+  .pg.next b { background-position: 0 100%; }
+  .prose { font-size: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<div class="shell">
+  <div class="wrap">
+    <header class="top" id="head">
+      <a class="brand" href="#" aria-label="langrain 的笔记，回到文章列表">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <rect x="1" y="3" width="3.2" height="11" rx="1.6" style="fill:var(--l1)"/>
+          <rect x="6.4" y="6" width="3.2" height="8" rx="1.6" style="fill:var(--l2)"/>
+          <rect x="11.8" y="1" width="3.2" height="13" rx="1.6" style="fill:var(--l3)"/>
+        </svg>
+        langrain
+      </a>
+      <nav class="nav" aria-label="站点">
+        <a href="#">文章</a>
+        <a href="#about">关于</a>
+        <button class="theme" id="theme" type="button" aria-label="切换深色或浅色" title="切换深色或浅色">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/></svg>
+        </button>
+      </nav>
+    </header>
+    <main id="view"></main>
+    <noscript><p>需要开启 JavaScript 才能显示文章。</p></noscript>
+    <footer class="foot-site" id="foot"></footer>
+  </div>
+</div>
+<div id="bar" hidden></div>
+
+<script>
+(function () {
+'use strict';
+
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+var root = document.documentElement;
+var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+var inline = function (s) { return esc(s).replace(/`([^`]+)`/g, '<code>$1</code>'); };
+var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+
+/* ---------- 内容：加一篇文章就是往 POSTS 最前面加一项 ---------- */
+
+var BR = {
+  note:  { name: '杂记',   lane: 0, color: '--l0' },
+  db:    { name: '数据库', lane: 1, color: '--l1' },
+  debug: { name: '排查',   lane: 2, color: '--l2' },
+  fe:    { name: '前端',   lane: 3, color: '--l3' }
+};
+var CHIPS = ['all', 'db', 'debug', 'fe', 'note'];
+
+var POSTS = [
+{
+  slug: 'wal-checkpoint', branch: 'db', date: '2026-10-18',
+  title: 'WAL 文件涨到 3GB，凶手是一个没结束的读事务',
+  sum: '数据库本体才 200MB，旁边的 -wal 文件却一直涨。checkpoint 被一个长时间开着的读连接挡住了。',
+  body: [
+    ['p', '服务跑了两周，数据库本体 200MB，旁边的 `app.db-wal` 却有 3GB。先说结论：有个读连接一直开着事务，checkpoint 没法越过它，WAL 只能不断往后追加，没法从头复用。'],
+    ['h', '先确认是不是 checkpoint 没跑完'],
+    ['p', '`PRAGMA wal_checkpoint(PASSIVE)` 返回三个数：busy、WAL 里的总页数、已经写回主库的页数。后两个差得越多，积压越多。'],
+    ['code', 'sql', `PRAGMA wal_checkpoint(PASSIVE);
+-- busy | log    | checkpointed
+--    0 | 786432 | 1024`],
+    ['p', '786432 页乘以 4096 字节正好是 3GB，而写回主库的只有 1024 页。'],
+    ['h', '为什么会这样'],
+    ['p', 'WAL 模式下，读事务开始时会记下 WAL 当时的末尾位置，之后这个读者看到的就是那一刻的快照。checkpoint 只能把这个位置之前的页写回主库，而且要等所有读者都不再依赖旧页，才能从 WAL 开头重新写。一个不结束的读事务，就把这个位置钉住了。'],
+    ['p', '我这里的读连接是个导出任务：用游标一行行读，中间还要调外部接口，一个事务开了十几个小时。'],
+    ['h', '处理'],
+    ['p', '先把导出任务停掉，再手动收一次：'],
+    ['code', 'sql', `PRAGMA wal_checkpoint(TRUNCATE);`],
+    ['p', '`TRUNCATE` 会等写者和读者都让开，把所有页写回主库，再把 WAL 截成 0 字节。读者一直不走的话它会返回 busy，设了 `busy_timeout` 就等到超时。所以治本的办法是改任务：每批取 1000 行就提交，用 `WHERE id > ?` 翻页，不用长游标。'],
+    ['p', '还有一点。`wal_autocheckpoint` 默认是 1000 页，只在提交时尝试一次不阻塞的 checkpoint，被读者挡住就放弃，也不报错。这个问题在日志里看不到，我现在直接监控 `-wal` 文件的大小。']
+  ]
+},
+{
+  slug: 'tcp-40ms', branch: 'debug', date: '2026-09-30',
+  title: '请求固定多出 40ms，是 Nagle 和延迟确认撞上了',
+  sum: '一个内部服务 p50 稳定在 41ms，抓包发现客户端把一个请求拆成了两次 write。',
+  body: [
+    ['p', '一个内部小服务，本机压测单次请求 1ms，放到测试环境 p50 却稳定在 41ms。数字这么整齐，多半不是业务慢，而是哪里有个定时器在等。'],
+    ['h', '抓包'],
+    ['p', '在服务端抓一次请求，用 `-ttt` 看包与包之间的间隔：'],
+    ['code', 'sh', `tcpdump -i eth0 -nn -ttt port 9000`],
+    ['p', '客户端先发来 4 字节的长度头，隔了约 40ms，才发正文。这 40ms 里服务端一直没有回 ACK。'],
+    ['h', '两个机制互相等'],
+    ['p', '客户端是 Python，默认开着 Nagle 算法：前一个小包还没收到确认，后面的小数据就先攒着。服务端内核开着延迟确认：收到一个小包不马上 ACK，最多等 40ms（Linux 的下限），指望顺带在响应里捎上。客户端等 ACK 才发正文，服务端等正文才响应，谁都不动，直到服务端的定时器到点。'],
+    ['h', '改法'],
+    ['p', '根本的问题是把一条消息拆成了两次 `send`。先把长度头和正文拼在一起一次发出去，再把 `TCP_NODELAY` 打开，免得以后有人又拆开：'],
+    ['code', 'py', `sock = socket.create_connection((host, 9000))
+sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+sock.sendall(header + body)  # 一次写完`],
+    ['p', 'p50 回到了 1.3ms。Go 的 net 包默认就开着 NoDelay，所以同样的问题在 Go 写的客户端里很少见，换一种语言写客户端才碰上。']
+  ]
+},
+{
+  slug: 'systemd-timer', branch: 'note', date: '2026-09-02',
+  title: '把 cron 换成 systemd timer 之后',
+  sum: '半年里 cron 任务静默失败了三次。换成 timer，日志和补跑都有地方管了。',
+  body: [
+    ['p', '我有几个定时任务：备份数据库、清理上传目录、给自己发周报。以前都放在 crontab 里，直到有一次备份脚本因为 PATH 不对失败了，整整九天没人发现。'],
+    ['h', '一个最小的例子'],
+    ['p', '一个任务要两个文件，一个描述做什么，一个描述什么时候做。'],
+    ['code', 'ini', `[Unit]
+Description=Backup app database
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/backup.sh`, 'backup.service'],
+    ['code', 'ini', `[Unit]
+Description=Backup app database, daily
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target`, 'backup.timer'],
+    ['code', 'sh', `systemctl enable --now backup.timer
+systemctl list-timers backup.timer
+journalctl -u backup.service -n 20`],
+    ['p', '`Persistent=true` 的意思是：如果机器在 3:30 关着，开机后补跑一次。cron 没有这个行为，要靠 anacron。`list-timers` 能看到下次什么时候跑、上次什么时候跑。输出进了 journal，`journalctl -u backup.service` 就是这个任务的全部日志，不用再往文件里重定向。'],
+    ['h', '不太顺手的地方'],
+    ['p', '一个简单任务要写两个文件，比一行 crontab 啰嗦得多。`OnCalendar` 的语法也要学一遍，好在可以先验证再用：`systemd-analyze calendar "Mon *-*-* 09:00"`。失败通知默认没有，我在 `[Unit]` 里加了 `OnFailure=`，指向一个发消息的 service。']
+  ]
+},
+{
+  slug: 'sqlite-affinity', branch: 'db', date: '2026-08-11',
+  title: '往 INTEGER 列里存「007」，取出来是 7',
+  sum: 'SQLite 的列类型只是亲和性，不是约束。STRICT 表可以把类型管严。',
+  body: [
+    ['p', '有张表的 `code` 列我声明成了 INTEGER，里面存门店编号，有些以 0 开头。导入数据之后发现，「007」变成了 7。'],
+    ['h', '发生了什么'],
+    ['p', 'SQLite 的列类型叫类型亲和性，是建议，不是约束。INTEGER 亲和性的列遇到看起来像整数的文本，会先转成整数再存。「007」能无损地转成 7，于是就转了。'],
+    ['code', 'sql', `CREATE TABLE shop (code INTEGER);
+INSERT INTO shop VALUES ('007');
+SELECT code, typeof(code) FROM shop;
+-- 7 | integer`],
+    ['p', '反过来，往 INTEGER 列里存 `\'abc\'` 不会报错，它就原样存成文本。'],
+    ['h', '两种办法'],
+    ['p', '编号就是字符串，列声明成 TEXT。以后遇到看起来是数字、但不参与计算的字段，比如邮编、手机号、编号，一律用 TEXT。'],
+    ['p', '另一个办法是 3.37 以后支持的 STRICT 表，类型对不上直接报错：'],
+    ['code', 'sql', `CREATE TABLE shop (code TEXT NOT NULL, floor INTEGER) STRICT;
+INSERT INTO shop VALUES ('007', 'abc');
+-- 报错：cannot store TEXT value in INTEGER column shop.floor`],
+    ['p', 'STRICT 表的列类型只能是 INT、INTEGER、REAL、TEXT、BLOB、ANY 这几种，原来写的 `VARCHAR(20)` 之类要改掉。老版本的 SQLite 打不开带 STRICT 表的库，部署前先确认运行环境的版本。']
+  ]
+},
+{
+  slug: 'raf-layout', branch: 'fe', date: '2026-07-20',
+  title: '动画循环里读 offsetHeight，布局被反复重算',
+  sum: '在 requestAnimationFrame 里交替读写样式，浏览器每读一次就得同步布局一次。',
+  body: [
+    ['p', '做一个列表拖拽排序，帧率只有 12fps。火焰图里全是 Layout，每个元素一次。'],
+    ['h', '读和写交替'],
+    ['code', 'js', `for (const el of items) {
+  const h = el.offsetHeight;                       // 读：要最新的布局
+  el.style.transform = 'translateY(' + h + 'px)';  // 写：让布局失效
+}`],
+    ['p', '浏览器会把样式修改攒起来，渲染时一起算。但 `offsetHeight` 要的是此刻的真实值，前面如果有还没处理的样式修改，就得立刻同步算一次布局。循环里读一次写一次，N 个元素就是 N 次布局。'],
+    ['h', '拆开'],
+    ['code', 'js', `const heights = items.map(el => el.offsetHeight);  // 先一次读完
+items.forEach((el, i) => {
+  el.style.transform = 'translateY(' + heights[i] + 'px)';  // 再一次写完
+});`],
+    ['p', '改完每帧只布局一次，帧时间从 80ms 左右降到 6ms 左右。位移我也从 `top` 换成了 `transform`：transform 不触发布局，只走合成。']
+  ]
+},
+{
+  slug: 'go-rss', branch: 'debug', date: '2026-06-05',
+  title: 'Go 服务的内存占用下不来，先看哪几个数',
+  sum: 'RSS 降不下去不一定是泄漏。先分清 HeapInuse、HeapIdle 和 HeapReleased。',
+  body: [
+    ['p', '监控里有个 Go 服务，RSS 稳在 1.8GB，流量低谷也不降。第一反应是泄漏，但 pprof 里 inuse_space 只有 300MB 左右。'],
+    ['h', '三个数'],
+    ['p', '`runtime.MemStats` 里最有用的是这三个：'],
+    ['ul', [
+      '`HeapInuse`：正在被对象使用的 span，对应 pprof 里看到的 inuse。',
+      '`HeapIdle`：已经没有对象、但还留在 Go 运行时手里的 span。',
+      '`HeapReleased`：Idle 里已经还给操作系统的那一部分。'
+    ]],
+    ['code', 'go', `var m runtime.MemStats
+runtime.ReadMemStats(&m)
+fmt.Println(m.HeapInuse>>20, m.HeapIdle>>20, m.HeapReleased>>20) // MB`],
+    ['p', '`HeapIdle - HeapReleased` 是运行时手里留着没还的内存，它仍然算在 RSS 里。我这里这个差值接近 1.3GB，是一次批量任务之后留下的。'],
+    ['p', '运行时的后台回收会慢慢把 Idle 还给系统，速度有限，所以批量任务结束后几分钟内 RSS 不降是正常的。真正该担心的是 `HeapInuse` 一路往上涨。'],
+    ['h', '后来怎么处理'],
+    ['p', '批量任务本身一次读了 200 万行再处理，我改成了分批，峰值降到原来的五分之一。如果确实需要立刻归还，可以调 `debug.FreeOSMemory()`，但它会触发一次完整的 GC，我只在任务结束的位置调了一次。']
+  ]
+}
+];
+
+function fnv(s) {
+  var h = 2166136261;
+  for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(16).padStart(8, '0').slice(0, 7);
+}
+POSTS.forEach(function (p) {
+  p.hash = fnv(p.slug);
+  var n = 0, c = 0;
+  p.body.forEach(function (b) {
+    if (b[0] === 'p') n += b[1].length;
+    else if (b[0] === 'ul') n += b[1].join('').length;
+    else if (b[0] === 'code') c += b[2].split('\n').length;
+  });
+  p.mins = Math.max(2, Math.round(n / 420 + c / 12));
+});
+
+/* ---------- 代码高亮：只区分注释和字符串 ---------- */
+
+var LANG = { sql: 'SQL', sh: 'Shell', go: 'Go', py: 'Python', js: 'JavaScript', ini: 'systemd' };
+var RES = {
+  sql: /(--.*)|('[^'\n]*'|"[^"\n]*")/g,
+  js: /(\/\/.*)|('[^'\n]*'|"[^"\n]*")/g,
+  go: /(\/\/.*)|('[^'\n]*'|"[^"\n]*")/g,
+  py: /(#.*)|('[^'\n]*'|"[^"\n]*")/g,
+  sh: /(#.*)|('[^'\n]*'|"[^"\n]*")/g,
+  ini: /(#.*)|('[^'\n]*'|"[^"\n]*")/g
+};
+function hl(lang, src) {
+  var re = RES[lang], out = '', last = 0, m;
+  re.lastIndex = 0;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    out += m[1] !== undefined ? '<span class="cmt">' + esc(m[1]) + '</span>' : '<span class="str">' + esc(m[2]) + '</span>';
+    last = re.lastIndex;
+  }
+  return out + esc(src.slice(last));
+}
+function codeHTML(lang, src, cap) {
+  return '<figure class="code"><figcaption><span>' + esc(cap || LANG[lang]) + '</span>' +
+    '<button class="copy" type="button">复制</button></figcaption>' +
+    '<pre><code>' + hl(lang, src) + '</code></pre></figure>';
+}
+
+/* ---------- 状态 ---------- */
+
+var view = $('#view'), head = $('#head'), bar = $('#bar');
+var current = null, active = 'all', reveal = 0, played = false, GP = null, listY = 0, ro = null, rq = 0;
+
+/* ---------- 首页 ---------- */
+
+function homeHTML() {
+  var counts = { all: POSTS.length };
+  POSTS.forEach(function (p) { counts[p.branch] = (counts[p.branch] || 0) + 1; });
+  var chips = CHIPS.map(function (k) {
+    var name = k === 'all' ? '全部' : BR[k].name;
+    var dot = k === 'all' ? '' : '<i class="dot" style="background:var(' + BR[k].color + ')"></i>';
+    return '<button class="chip" type="button" data-k="' + k + '" aria-pressed="' + (k === active) + '">' +
+      dot + name + '<span class="n">' + (counts[k] || 0) + '</span></button>';
+  }).join('');
+  var rows = POSTS.map(function (p, i) {
+    var b = BR[p.branch];
+    return '<li class="commit" data-i="' + i + '" data-b="' + p.branch + '" style="--c:var(' + b.color + ')">' +
+      '<div class="meta"><span>' + p.hash + '</span><span>' + p.date + '</span>' +
+      '<span class="br"><i class="dot" style="background:var(--c)"></i>' + b.name + '</span>' +
+      (i === 0 ? '<span class="headb">HEAD</span>' : '') + '</div>' +
+      '<h2><a href="#' + p.slug + '">' + esc(p.title) + '</a></h2>' +
+      '<p class="sum">' + esc(p.sum) + '</p>' +
+      '<p class="foot">' + p.mins + ' 分钟读完</p></li>';
+  }).join('');
+  return '<section class="intro">' +
+    '<h1 class="lede">写后端，也写点工具。这里记排查的过程，结论放在最前面。</h1>' +
+    '<p class="sub">我是 langrain，白天写后端服务，晚上折腾小工具。文章写完才发，不定期更新。</p>' +
+    '<div class="chips" role="group" aria-label="按分支筛选">' + chips + '</div></section>' +
+    '<section class="log" id="log"><svg id="graph" aria-hidden="true"></svg>' +
+    '<ol class="commits" id="commits">' + rows + '</ol></section>' +
+    '<section class="about" id="about"><h2>关于</h2>' +
+    '<p>我叫 langrain，做后端开发，主要写 Go，数据库用得最多的是 SQLite 和 PostgreSQL。</p>' +
+    '<p>这个站点是单个 HTML 文件，没有构建步骤。文章都在脚本顶部的 POSTS 数组里，加一篇就是往数组最前面加一项。</p>' +
+    '<dl><dt>语言</dt><dd>Go、Python，偶尔写 JavaScript</dd>' +
+    '<dt>数据库</dt><dd>SQLite、PostgreSQL</dd>' +
+    '<dt>系统</dt><dd>Debian、systemd</dd></dl></section>';
+}
+
+function drawGraph() {
+  var ol = $('#commits'), svg = $('#graph');
+  if (!ol || !svg) return;
+  var narrow = innerWidth < 520;
+  var x0 = narrow ? 10 : 12, step = narrow ? 12 : 16;
+  var W = x0 * 2 + step * 3;
+  root.style.setProperty('--rail-pad', (W + (narrow ? 14 : 24)) + 'px');
+  var H = ol.offsetHeight;
+  var lis = $$('.commit', ol);
+  var pts = lis.map(function (li, i) {
+    var m = $('.meta', li);
+    var b = POSTS[i].branch;
+    return { y: li.offsetTop + m.offsetTop + m.offsetHeight / 2, b: b, lane: BR[b].lane };
+  });
+  var X = function (l) { return x0 + l * step; };
+  var R = 22, ghost = '', live = '', nodes = '';
+
+  var trunk = 'M' + X(0) + ' 0V' + (H - 20);
+  ghost += '<path class="gp" data-b="trunk" d="' + trunk + '" style="stroke:var(--l0)"/>';
+  live += '<path class="p" data-b="trunk" d="' + trunk + '" style="stroke:var(--l0)"/>';
+
+  ['db', 'debug', 'fe'].forEach(function (k) {
+    var mine = pts.filter(function (p) { return p.b === k; });
+    if (!mine.length) return;
+    var top = Math.min.apply(null, mine.map(function (p) { return p.y; }));
+    var bot = Math.max.apply(null, mine.map(function (p) { return p.y; }));
+    var x = X(BR[k].lane), tx = X(0);
+    var mt = Math.max(top - R, 2), ym = (top + mt) / 2;
+    var yb = bot + R, yf = (bot + yb) / 2;
+    var d = 'M' + x + ' ' + top + 'V' + bot +
+      'M' + tx + ' ' + yb + 'C' + tx + ' ' + yf + ' ' + x + ' ' + yf + ' ' + x + ' ' + bot +
+      'M' + x + ' ' + top + 'C' + x + ' ' + ym + ' ' + tx + ' ' + ym + ' ' + tx + ' ' + mt;
+    var st = 'stroke:var(' + BR[k].color + ')';
+    ghost += '<path class="gp" data-b="' + k + '" d="' + d + '" style="' + st + '"/>';
+    live += '<path class="p" data-b="' + k + '" d="' + d + '" style="' + st + '"/>';
+  });
+
+  pts.forEach(function (p, i) {
+    var cx = X(p.lane), col = BR[p.b].color;
+    ghost += '<circle class="gnode" data-b="' + p.b + '" cx="' + cx + '" cy="' + p.y + '" r="4" style="stroke:var(' + col + ')"/>';
+    var fill = i === 0 ? ';fill:var(' + col + ')' : '';
+    nodes += '<circle class="node" data-i="' + i + '" data-b="' + p.b + '" cx="' + cx + '" cy="' + p.y + '" r="5.5" style="stroke:var(' + col + ')' + fill + '"/>';
+    if (i === 0) nodes += '<circle class="pulse" cx="' + cx + '" cy="' + p.y + '" r="5.5" style="stroke:var(' + col + ')"/>';
+  });
+
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.innerHTML = '<defs><clipPath id="rv"><rect id="rvr" x="-30" y="0" width="' + (W + 60) + '" height="0"/></clipPath></defs>' +
+    '<g>' + ghost + '</g><g clip-path="url(#rv)">' + live + '</g><g>' + nodes + '</g>';
+  GP = { pts: pts, H: H };
+  applyFilter();
+  setReveal(reveal);
+}
+
+function setReveal(v) {
+  if (!GP) return;
+  reveal = clamp(v, 0, GP.H);
+  var r = $('#rvr');
+  if (r) r.setAttribute('height', reveal);
+  $$('#graph .node').forEach(function (n) {
+    n.classList.toggle('on', GP.pts[+n.getAttribute('data-i')].y <= reveal + 6);
+  });
+}
+function targetReveal() {
+  var log = $('#log');
+  if (!log || !GP) return 0;
+  var atEnd = innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+  if (atEnd) return GP.H;
+  return clamp(innerHeight * 0.82 - log.getBoundingClientRect().top, 0, GP.H);
+}
+function introReveal() {
+  if (reduced) { setReveal(targetReveal()); return; }
+  var t0 = performance.now(), dur = 1100;
+  (function f(now) {
+    if (current !== 'home') return;
+    var t = clamp((now - t0) / dur, 0, 1);
+    var e = 1 - Math.pow(1 - t, 3);
+    setReveal(Math.max(reveal, e * targetReveal()));
+    if (t < 1) requestAnimationFrame(f);
+  })(t0);
+}
+
+function applyFilter() {
+  $$('.commit', view).forEach(function (li) {
+    li.classList.toggle('dim', active !== 'all' && li.getAttribute('data-b') !== active);
+  });
+  $$('#graph [data-b]').forEach(function (el) {
+    var b = el.getAttribute('data-b');
+    el.classList.toggle('dim', active !== 'all' && b !== active && b !== 'trunk');
+  });
+}
+
+function hot(e, on) {
+  var li = e.target.closest && e.target.closest('.commit');
+  if (!li) return;
+  var n = $('#graph .node[data-i="' + li.getAttribute('data-i') + '"]');
+  if (n) n.classList.toggle('hot', on);
+}
+
+function mountHome() {
+  $$('.chip', view).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.getAttribute('data-k');
+      active = (active === k && k !== 'all') ? 'all' : k;
+      $$('.chip', view).forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-k') === active)); });
+      applyFilter();
+    });
+  });
+  var ol = $('#commits');
+  ol.addEventListener('mouseover', function (e) { hot(e, true); });
+  ol.addEventListener('mouseout', function (e) { hot(e, false); });
+  ol.addEventListener('focusin', function (e) { hot(e, true); });
+  ol.addEventListener('focusout', function (e) { hot(e, false); });
+  drawGraph();
+  if (!played) { played = true; reveal = 0; setReveal(0); introReveal(); }
+  else setReveal(Math.max(reveal, targetReveal()));
+  if (window.ResizeObserver) {
+    ro = new ResizeObserver(function () {
+      if (rq) return;
+      rq = requestAnimationFrame(function () { rq = 0; drawGraph(); });
+    });
+    ro.observe(ol);
+  }
+}
+
+/* ---------- 文章页 ---------- */
+
+function postHTML(i) {
+  var p = POSTS[i], b = BR[p.branch], n = 0, toc = [];
+  var body = p.body.map(function (x) {
+    if (x[0] === 'h') { n++; toc.push(x[1]); return '<h2 id="s' + n + '">' + esc(x[1]) + '</h2>'; }
+    if (x[0] === 'p') return '<p>' + inline(x[1]) + '</p>';
+    if (x[0] === 'ul') return '<ul>' + x[1].map(function (t) { return '<li>' + inline(t) + '</li>'; }).join('') + '</ul>';
+    return codeHTML(x[1], x[2], x[3]);
+  }).join('');
+  var newer = POSTS[i - 1], older = POSTS[i + 1];
+  var pg = function (q, cls, label) {
+    return q ? '<a class="pg ' + cls + '" href="#' + q.slug + '"><small>' + label + '</small><b>' + esc(q.title) + '</b></a>' : '<span></span>';
+  };
+  var tocHTML = toc.length ? '<aside class="toc" aria-label="本文目录"><nav><ul>' +
+    toc.map(function (t, k) { return '<li><button type="button" data-s="' + (k + 1) + '">' + esc(t) + '</button></li>'; }).join('') +
+    '</ul></nav></aside>' : '';
+  return '<article class="post">' + tocHTML +
+    '<a class="back" href="#"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M9 2.5 4.5 7 9 11.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>文章列表</a>' +
+    '<div class="meta"><span>' + p.hash + '</span><span>' + p.date + '</span>' +
+    '<span class="br"><i class="dot" style="background:var(' + b.color + ')"></i>' + b.name + '</span>' +
+    '<span>' + p.mins + ' 分钟读完</span></div>' +
+    '<h1>' + esc(p.title) + '</h1><p class="dek">' + esc(p.sum) + '</p>' +
+    '<div class="prose">' + body + '</div>' +
+    '<nav class="pager" aria-label="相邻文章">' + pg(newer, 'prev', '较新') + pg(older, 'next', '较旧') + '</nav></article>';
+}
+
+function mountPost() {
+  $$('.copy', view).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var code = $('code', btn.closest('.code'));
+      var reset = function () { setTimeout(function () { btn.textContent = '复制'; btn.classList.remove('ok'); }, 1400); };
+      var done = function () { btn.textContent = '已复制'; btn.classList.add('ok'); reset(); };
+      var fallback = function () {
+        var r = document.createRange(); r.selectNodeContents(code);
+        var s = getSelection(); s.removeAllRanges(); s.addRange(r);
+        btn.textContent = '已选中'; reset();
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code.textContent).then(done, fallback);
+      else fallback();
+    });
+  });
+  $$('.toc button', view).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var h = $('#s' + b.getAttribute('data-s'));
+      if (h) h.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    });
+  });
+  onScroll();
+}
+
+/* ---------- 路由 ---------- */
+
+function show(kind, i) {
+  current = kind;
+  if (ro) { ro.disconnect(); ro = null; }
+  GP = null;
+  bar.hidden = kind !== 'post';
+  bar.style.transform = 'scaleX(0)';
+  view.innerHTML = kind === 'home' ? homeHTML() : postHTML(i);
+  view.classList.remove('enter'); void view.offsetWidth; view.classList.add('enter');
+  if (kind === 'home') mountHome(); else mountPost();
+}
+
+function route() {
+  var h = decodeURIComponent(location.hash.slice(1));
+  var i = POSTS.findIndex(function (p) { return p.slug === h; });
+  if (i >= 0) {
+    if (current === 'home') listY = window.scrollY;
+    show('post', i);
+    window.scrollTo(0, 0);
+    return;
+  }
+  var wasPost = current === 'post';
+  if (current !== 'home') show('home');
+  if (h === 'about') {
+    var a = $('#about');
+    if (a) requestAnimationFrame(function () { a.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); });
+  } else if (wasPost) {
+    window.scrollTo(0, listY);
+  } else {
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+  }
+}
+
+/* ---------- 滚动 ---------- */
+
+function onScroll() {
+  head.classList.toggle('stuck', window.scrollY > 8);
+  if (current === 'home') {
+    if (played) setReveal(Math.max(reveal, targetReveal()));
+  } else if (current === 'post') {
+    var a = $('.post', view);
+    if (!a) return;
+    var r = a.getBoundingClientRect();
+    var p = clamp((-r.top) / Math.max(1, r.height - innerHeight * 0.55), 0, 1);
+    bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    var idx = -1;
+    $$('.prose h2', view).forEach(function (h, k) { if (h.getBoundingClientRect().top <= 120) idx = k; });
+    $$('.toc li', view).forEach(function (li, k) { li.classList.toggle('on', k === idx); });
+  }
+}
+var tick = false;
+addEventListener('scroll', function () {
+  if (tick) return;
+  tick = true;
+  requestAnimationFrame(function () { tick = false; onScroll(); });
+}, { passive: true });
+
+/* ---------- 主题 ---------- */
+
+var themeBtn = $('#theme');
+function isDark() {
+  var a = root.getAttribute('data-theme');
+  return a ? a === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+}
+try {
+  var saved = localStorage.getItem('theme');
+  if (saved && !root.getAttribute('data-theme')) root.setAttribute('data-theme', saved);
+} catch (e) {}
+themeBtn.addEventListener('click', function () {
+  var next = isDark() ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  themeBtn.classList.toggle('flip');
+  try { localStorage.setItem('theme', next); } catch (e) {}
+});
+
+/* ---------- 启动 ---------- */
+
+$('#foot').textContent = '© ' + new Date().getFullYear() + ' langrain';
+addEventListener('hashchange', route);
+addEventListener('resize', function () { if (current === 'home' && !rq) rq = requestAnimationFrame(function () { rq = 0; drawGraph(); }); });
+route();
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(function () { if (current === 'home') drawGraph(); });
+}
+})();
+</script>
+
+</body></html>
