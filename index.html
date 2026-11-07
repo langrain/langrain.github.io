@@ -1,4 +1,9 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>langrain 的笔记</title><meta name="claude:viewport-fit-sides" content="cover"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"><style id="site-css">
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px system-ui,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>langrain 的笔记</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap">
+<style id="site-css">
 /* 版式：顶部一句话 + 一条提交历史。文章按时间倒序排在左侧的分支图旁边，分支对应主题（日常 / 编程 / 折腾）。 */
 :root {
   --bg: #EEF0ED;
@@ -195,6 +200,7 @@ button { font: inherit; color: inherit; }
 .toprow { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .back, .edit-l { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); text-decoration: none; transition: color .2s; }
 .back:hover, .edit-l:hover { color: var(--ink); }
+button.edit-l { padding: 0; background: none; border: 0; cursor: pointer; font-family: var(--f-sans); }
 .back svg { transition: transform .25s; }
 .back:hover svg { transform: translateX(-3px); }
 .post .meta { margin-top: 28px; }
@@ -212,6 +218,14 @@ button { font: inherit; color: inherit; }
 .copy:hover { color: var(--ink); border-color: var(--line); }
 .copy.ok { color: var(--bg); background: var(--l3); border-color: var(--l3); }
 .code pre { margin: 0; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.7 var(--f-mono); color: var(--code-ink); tab-size: 4; }
+.media { margin: 1.8em 0; }
+.media img, .media video { display: block; max-width: 100%; height: auto; border-radius: 6px; background: var(--code-bg); }
+.media figcaption { margin-top: 8px; font: 13px/1.6 var(--f-sans); color: var(--muted); }
+.att { display: flex; align-items: center; gap: 10px; width: fit-content; max-width: 100%; margin: 1.4em 0; padding: 10px 14px; font: 15px/1.5 var(--f-sans); color: var(--ink); text-decoration: none; border: 1px solid var(--line); border-radius: 6px; transition: border-color .2s, background-color .2s; }
+.att:hover { border-color: var(--muted); background: var(--code-bg); }
+.att svg { flex: none; color: var(--muted); }
+.att .an { min-width: 0; overflow-wrap: anywhere; }
+.att .as { flex: none; font: 12px/1 var(--f-mono); color: var(--muted); }
 .cmt { color: var(--code-cmt); }
 .str { color: var(--code-str); }
 
@@ -255,6 +269,9 @@ button { font: inherit; color: inherit; }
 .tabs { display: flex; gap: 4px; margin-bottom: 8px; }
 .tab { padding: 4px 12px; cursor: pointer; font-size: 14px; color: var(--muted); background: none; border: 0; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; }
 .tab[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tabs { align-items: center; }
+.tabs .grow { flex: 1; }
+.btn.small { padding: 4px 12px; font-size: 13px; }
 .pv { min-height: 24rem; margin-top: 0; }
 .pv h1 { margin: 0 0 8px; font: 700 1.9rem/1.4 var(--f-serif); }
 .hint { margin: 0 0 22px; font-size: 13px; line-height: 1.9; color: var(--muted); }
@@ -282,7 +299,10 @@ button { font: inherit; color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
-</style><div id="root"></div><script id="data" type="application/json">[{"slug":"p-mw63c9ue","branch":"life","date":"2026-11-07","title":"Daily life","sum":"","md":"​今天醒得比平时稍早一些。没有闹钟的催促，推开窗，微凉的空气里带着一丝秋日独有的清爽\n```Rust\nprintln!(\"2\");\n```"},{"slug":"p-mw634p9f","branch":"life","date":"2026-11-07","title":"你好","sum":"那你呢","md":"你好，我是一个\n\n## 我的天哪\n`println!(\"Hello World!)`"},{"slug":"hello","branch":"life","date":"2026-11-01","title":"这里开张了","sum":"我一直喜欢写代码。写的时候会碰到各种小问题，解决完就忘，下次又碰到。所以想有个地方记下来。","md":"我一直喜欢写代码。写的时候会碰到各种小问题，解决完就忘，下次又碰到。所以想有个地方记下来。\n\n除了代码，平时的日子也想留几笔：吃了什么、去了哪、哪天心情不错。这些以后翻起来，比代码有意思。\n\n文章没有固定的更新时间，想写了就写，写完再发。"},{"slug":"wal-checkpoint","branch":"code","date":"2026-10-18","title":"WAL 文件涨到 3GB，凶手是一个没结束的读事务","sum":"数据库本体才 200MB，旁边的 -wal 文件却一直涨。checkpoint 被一个长时间开着的读连接挡住了。","md":"服务跑了两周，数据库本体 200MB，旁边的 `app.db-wal` 却有 3GB。先说结论：有个读连接一直开着事务，checkpoint 没法越过它，WAL 只能不断往后追加，没法从头复用。\n\n## 先确认是不是 checkpoint 没跑完\n\n`PRAGMA wal_checkpoint(PASSIVE)` 返回三个数：busy、WAL 里的总页数、已经写回主库的页数。后两个差得越多，积压越多。\n\n```sql\nPRAGMA wal_checkpoint(PASSIVE);\n-- busy | log    | checkpointed\n--    0 | 786432 | 1024\n```\n\n786432 页乘以 4096 字节正好是 3GB，而写回主库的只有 1024 页。\n\n## 为什么会这样\n\nWAL 模式下，读事务开始时会记下 WAL 当时的末尾位置，之后这个读者看到的就是那一刻的快照。checkpoint 只能把这个位置之前的页写回主库，而且要等所有读者都不再依赖旧页，才能从 WAL 开头重新写。一个不结束的读事务，就把这个位置钉住了。\n\n我这里的读连接是个导出任务：用游标一行行读，中间还要调外部接口，一个事务开了十几个小时。\n\n## 处理\n\n先把导出任务停掉，再手动收一次：\n\n```sql\nPRAGMA wal_checkpoint(TRUNCATE);\n```\n\n`TRUNCATE` 会等写者和读者都让开，把所有页写回主库，再把 WAL 截成 0 字节。读者一直不走的话它会返回 busy，设了 `busy_timeout` 就等到超时。所以治本的办法是改任务：每批取 1000 行就提交，用 `WHERE id > ?` 翻页，不用长游标。\n\n还有一点。`wal_autocheckpoint` 默认是 1000 页，只在提交时尝试一次不阻塞的 checkpoint，被读者挡住就放弃，也不报错。这个问题在日志里看不到，我现在直接监控 `-wal` 文件的大小。"},{"slug":"tcp-40ms","branch":"tinker","date":"2026-09-30","title":"请求固定多出 40ms，是 Nagle 和延迟确认撞上了","sum":"一个内部服务 p50 稳定在 41ms，抓包发现客户端把一个请求拆成了两次 write。","md":"一个内部小服务，本机压测单次请求 1ms，放到测试环境 p50 却稳定在 41ms。数字这么整齐，多半不是业务慢，而是哪里有个定时器在等。\n\n## 抓包\n\n在服务端抓一次请求，用 `-ttt` 看包与包之间的间隔：\n\n```sh\ntcpdump -i eth0 -nn -ttt port 9000\n```\n\n客户端先发来 4 字节的长度头，隔了约 40ms，才发正文。这 40ms 里服务端一直没有回 ACK。\n\n## 两个机制互相等\n\n客户端是 Python，默认开着 Nagle 算法：前一个小包还没收到确认，后面的小数据就先攒着。服务端内核开着延迟确认：收到一个小包不马上 ACK，最多等 40ms（Linux 的下限），指望顺带在响应里捎上。客户端等 ACK 才发正文，服务端等正文才响应，谁都不动，直到服务端的定时器到点。\n\n## 改法\n\n根本的问题是把一条消息拆成了两次 `send`。先把长度头和正文拼在一起一次发出去，再把 `TCP_NODELAY` 打开，免得以后有人又拆开：\n\n```py\nsock = socket.create_connection((host, 9000))\nsock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)\nsock.sendall(header + body)  # 一次写完\n```\n\np50 回到了 1.3ms。Go 的 net 包默认就开着 NoDelay，所以同样的问题在 Go 写的客户端里很少见，换一种语言写客户端才碰上。"},{"slug":"systemd-timer","branch":"tinker","date":"2026-09-02","title":"把 cron 换成 systemd timer 之后","sum":"半年里 cron 任务静默失败了三次。换成 timer，日志和补跑都有地方管了。","md":"我有几个定时任务：备份数据库、清理上传目录、给自己发周报。以前都放在 crontab 里，直到有一次备份脚本因为 PATH 不对失败了，整整九天没人发现。\n\n## 一个最小的例子\n\n一个任务要两个文件，一个描述做什么，一个描述什么时候做。\n\n```ini backup.service\n[Unit]\nDescription=Backup app database\n\n[Service]\nType=oneshot\nExecStart=/usr/local/bin/backup.sh\n```\n\n```ini backup.timer\n[Unit]\nDescription=Backup app database, daily\n\n[Timer]\nOnCalendar=*-*-* 03:30:00\nPersistent=true\nRandomizedDelaySec=300\n\n[Install]\nWantedBy=timers.target\n```\n\n```sh\nsystemctl enable --now backup.timer\nsystemctl list-timers backup.timer\njournalctl -u backup.service -n 20\n```\n\n`Persistent=true` 的意思是：如果机器在 3:30 关着，开机后补跑一次。cron 没有这个行为，要靠 anacron。`list-timers` 能看到下次什么时候跑、上次什么时候跑。输出进了 journal，`journalctl -u backup.service` 就是这个任务的全部日志，不用再往文件里重定向。\n\n## 不太顺手的地方\n\n一个简单任务要写两个文件，比一行 crontab 啰嗦得多。`OnCalendar` 的语法也要学一遍，好在可以先验证再用：`systemd-analyze calendar \"Mon *-*-* 09:00\"`。失败通知默认没有，我在 `[Unit]` 里加了 `OnFailure=`，指向一个发消息的 service。"},{"slug":"sqlite-affinity","branch":"code","date":"2026-08-11","title":"往 INTEGER 列里存「007」，取出来是 7","sum":"SQLite 的列类型只是亲和性，不是约束。STRICT 表可以把类型管严。","md":"有张表的 `code` 列我声明成了 INTEGER，里面存门店编号，有些以 0 开头。导入数据之后发现，「007」变成了 7。\n\n## 发生了什么\n\nSQLite 的列类型叫类型亲和性，是建议，不是约束。INTEGER 亲和性的列遇到看起来像整数的文本，会先转成整数再存。「007」能无损地转成 7，于是就转了。\n\n```sql\nCREATE TABLE shop (code INTEGER);\nINSERT INTO shop VALUES ('007');\nSELECT code, typeof(code) FROM shop;\n-- 7 | integer\n```\n\n反过来，往 INTEGER 列里存 `'abc'` 不会报错，它就原样存成文本。\n\n## 两种办法\n\n编号就是字符串，列声明成 TEXT。以后遇到看起来是数字、但不参与计算的字段，比如邮编、手机号、编号，一律用 TEXT。\n\n另一个办法是 3.37 以后支持的 STRICT 表，类型对不上直接报错：\n\n```sql\nCREATE TABLE shop (code TEXT NOT NULL, floor INTEGER) STRICT;\nINSERT INTO shop VALUES ('007', 'abc');\n-- 报错：cannot store TEXT value in INTEGER column shop.floor\n```\n\nSTRICT 表的列类型只能是 INT、INTEGER、REAL、TEXT、BLOB、ANY 这几种，原来写的 `VARCHAR(20)` 之类要改掉。老版本的 SQLite 打不开带 STRICT 表的库，部署前先确认运行环境的版本。"},{"slug":"raf-layout","branch":"code","date":"2026-07-20","title":"动画循环里读 offsetHeight，布局被反复重算","sum":"在 requestAnimationFrame 里交替读写样式，浏览器每读一次就得同步布局一次。","md":"做一个列表拖拽排序，帧率只有 12fps。火焰图里全是 Layout，每个元素一次。\n\n## 读和写交替\n\n```js\nfor (const el of items) {\n  const h = el.offsetHeight;                       // 读：要最新的布局\n  el.style.transform = 'translateY(' + h + 'px)';  // 写：让布局失效\n}\n```\n\n浏览器会把样式修改攒起来，渲染时一起算。但 `offsetHeight` 要的是此刻的真实值，前面如果有还没处理的样式修改，就得立刻同步算一次布局。循环里读一次写一次，N 个元素就是 N 次布局。\n\n## 拆开\n\n```js\nconst heights = items.map(el => el.offsetHeight);  // 先一次读完\nitems.forEach((el, i) => {\n  el.style.transform = 'translateY(' + heights[i] + 'px)';  // 再一次写完\n});\n```\n\n改完每帧只布局一次，帧时间从 80ms 左右降到 6ms 左右。位移我也从 `top` 换成了 `transform`：transform 不触发布局，只走合成。"},{"slug":"go-rss","branch":"tinker","date":"2026-06-05","title":"Go 服务的内存占用下不来，先看哪几个数","sum":"RSS 降不下去不一定是泄漏。先分清 HeapInuse、HeapIdle 和 HeapReleased。","md":"监控里有个 Go 服务，RSS 稳在 1.8GB，流量低谷也不降。第一反应是泄漏，但 pprof 里 inuse_space 只有 300MB 左右。\n\n## 三个数\n\n`runtime.MemStats` 里最有用的是这三个：\n\n- `HeapInuse`：正在被对象使用的 span，对应 pprof 里看到的 inuse。\n- `HeapIdle`：已经没有对象、但还留在 Go 运行时手里的 span。\n- `HeapReleased`：Idle 里已经还给操作系统的那一部分。\n\n```go\nvar m runtime.MemStats\nruntime.ReadMemStats(&m)\nfmt.Println(m.HeapInuse>>20, m.HeapIdle>>20, m.HeapReleased>>20) // MB\n```\n\n`HeapIdle - HeapReleased` 是运行时手里留着没还的内存，它仍然算在 RSS 里。我这里这个差值接近 1.3GB，是一次批量任务之后留下的。\n\n运行时的后台回收会慢慢把 Idle 还给系统，速度有限，所以批量任务结束后几分钟内 RSS 不降是正常的。真正该担心的是 `HeapInuse` 一路往上涨。\n\n## 后来怎么处理\n\n批量任务本身一次读了 200 万行再处理，我改成了分批，峰值降到原来的五分之一。如果确实需要立刻归还，可以调 `debug.FreeOSMemory()`，但它会触发一次完整的 GC，我只在任务结束的位置调了一次。"}]</script><script id="app">
+</style>
+<div id="root"></div>
+<script id="data" type="application/json">[{"slug":"p-mw63c9ue","branch":"life","date":"2026-11-07","title":"Daily life","sum":"","md":"​今天醒得比平时稍早一些。没有闹钟的催促，推开窗，微凉的空气里带着一丝秋日独有的清爽\n```Rust\nprintln!(\"2\");\n```"},{"slug":"p-mw634p9f","branch":"life","date":"2026-11-07","title":"你好","sum":"那你呢","md":"你好，我是一个\n\n## 我的天哪\n`println!(\"Hello World!)`"},{"slug":"hello","branch":"life","date":"2026-11-01","title":"这里开张了","sum":"我一直喜欢写代码。写的时候会碰到各种小问题，解决完就忘，下次又碰到。所以想有个地方记下来。","md":"我一直喜欢写代码。写的时候会碰到各种小问题，解决完就忘，下次又碰到。所以想有个地方记下来。\n\n除了代码，平时的日子也想留几笔：吃了什么、去了哪、哪天心情不错。这些以后翻起来，比代码有意思。\n\n文章没有固定的更新时间，想写了就写，写完再发。"},{"slug":"wal-checkpoint","branch":"code","date":"2026-10-18","title":"WAL 文件涨到 3GB，凶手是一个没结束的读事务","sum":"数据库本体才 200MB，旁边的 -wal 文件却一直涨。checkpoint 被一个长时间开着的读连接挡住了。","md":"服务跑了两周，数据库本体 200MB，旁边的 `app.db-wal` 却有 3GB。先说结论：有个读连接一直开着事务，checkpoint 没法越过它，WAL 只能不断往后追加，没法从头复用。\n\n## 先确认是不是 checkpoint 没跑完\n\n`PRAGMA wal_checkpoint(PASSIVE)` 返回三个数：busy、WAL 里的总页数、已经写回主库的页数。后两个差得越多，积压越多。\n\n```sql\nPRAGMA wal_checkpoint(PASSIVE);\n-- busy | log    | checkpointed\n--    0 | 786432 | 1024\n```\n\n786432 页乘以 4096 字节正好是 3GB，而写回主库的只有 1024 页。\n\n## 为什么会这样\n\nWAL 模式下，读事务开始时会记下 WAL 当时的末尾位置，之后这个读者看到的就是那一刻的快照。checkpoint 只能把这个位置之前的页写回主库，而且要等所有读者都不再依赖旧页，才能从 WAL 开头重新写。一个不结束的读事务，就把这个位置钉住了。\n\n我这里的读连接是个导出任务：用游标一行行读，中间还要调外部接口，一个事务开了十几个小时。\n\n## 处理\n\n先把导出任务停掉，再手动收一次：\n\n```sql\nPRAGMA wal_checkpoint(TRUNCATE);\n```\n\n`TRUNCATE` 会等写者和读者都让开，把所有页写回主库，再把 WAL 截成 0 字节。读者一直不走的话它会返回 busy，设了 `busy_timeout` 就等到超时。所以治本的办法是改任务：每批取 1000 行就提交，用 `WHERE id > ?` 翻页，不用长游标。\n\n还有一点。`wal_autocheckpoint` 默认是 1000 页，只在提交时尝试一次不阻塞的 checkpoint，被读者挡住就放弃，也不报错。这个问题在日志里看不到，我现在直接监控 `-wal` 文件的大小。"},{"slug":"tcp-40ms","branch":"tinker","date":"2026-09-30","title":"请求固定多出 40ms，是 Nagle 和延迟确认撞上了","sum":"一个内部服务 p50 稳定在 41ms，抓包发现客户端把一个请求拆成了两次 write。","md":"一个内部小服务，本机压测单次请求 1ms，放到测试环境 p50 却稳定在 41ms。数字这么整齐，多半不是业务慢，而是哪里有个定时器在等。\n\n## 抓包\n\n在服务端抓一次请求，用 `-ttt` 看包与包之间的间隔：\n\n```sh\ntcpdump -i eth0 -nn -ttt port 9000\n```\n\n客户端先发来 4 字节的长度头，隔了约 40ms，才发正文。这 40ms 里服务端一直没有回 ACK。\n\n## 两个机制互相等\n\n客户端是 Python，默认开着 Nagle 算法：前一个小包还没收到确认，后面的小数据就先攒着。服务端内核开着延迟确认：收到一个小包不马上 ACK，最多等 40ms（Linux 的下限），指望顺带在响应里捎上。客户端等 ACK 才发正文，服务端等正文才响应，谁都不动，直到服务端的定时器到点。\n\n## 改法\n\n根本的问题是把一条消息拆成了两次 `send`。先把长度头和正文拼在一起一次发出去，再把 `TCP_NODELAY` 打开，免得以后有人又拆开：\n\n```py\nsock = socket.create_connection((host, 9000))\nsock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)\nsock.sendall(header + body)  # 一次写完\n```\n\np50 回到了 1.3ms。Go 的 net 包默认就开着 NoDelay，所以同样的问题在 Go 写的客户端里很少见，换一种语言写客户端才碰上。"},{"slug":"systemd-timer","branch":"tinker","date":"2026-09-02","title":"把 cron 换成 systemd timer 之后","sum":"半年里 cron 任务静默失败了三次。换成 timer，日志和补跑都有地方管了。","md":"我有几个定时任务：备份数据库、清理上传目录、给自己发周报。以前都放在 crontab 里，直到有一次备份脚本因为 PATH 不对失败了，整整九天没人发现。\n\n## 一个最小的例子\n\n一个任务要两个文件，一个描述做什么，一个描述什么时候做。\n\n```ini backup.service\n[Unit]\nDescription=Backup app database\n\n[Service]\nType=oneshot\nExecStart=/usr/local/bin/backup.sh\n```\n\n```ini backup.timer\n[Unit]\nDescription=Backup app database, daily\n\n[Timer]\nOnCalendar=*-*-* 03:30:00\nPersistent=true\nRandomizedDelaySec=300\n\n[Install]\nWantedBy=timers.target\n```\n\n```sh\nsystemctl enable --now backup.timer\nsystemctl list-timers backup.timer\njournalctl -u backup.service -n 20\n```\n\n`Persistent=true` 的意思是：如果机器在 3:30 关着，开机后补跑一次。cron 没有这个行为，要靠 anacron。`list-timers` 能看到下次什么时候跑、上次什么时候跑。输出进了 journal，`journalctl -u backup.service` 就是这个任务的全部日志，不用再往文件里重定向。\n\n## 不太顺手的地方\n\n一个简单任务要写两个文件，比一行 crontab 啰嗦得多。`OnCalendar` 的语法也要学一遍，好在可以先验证再用：`systemd-analyze calendar \"Mon *-*-* 09:00\"`。失败通知默认没有，我在 `[Unit]` 里加了 `OnFailure=`，指向一个发消息的 service。"},{"slug":"sqlite-affinity","branch":"code","date":"2026-08-11","title":"往 INTEGER 列里存「007」，取出来是 7","sum":"SQLite 的列类型只是亲和性，不是约束。STRICT 表可以把类型管严。","md":"有张表的 `code` 列我声明成了 INTEGER，里面存门店编号，有些以 0 开头。导入数据之后发现，「007」变成了 7。\n\n## 发生了什么\n\nSQLite 的列类型叫类型亲和性，是建议，不是约束。INTEGER 亲和性的列遇到看起来像整数的文本，会先转成整数再存。「007」能无损地转成 7，于是就转了。\n\n```sql\nCREATE TABLE shop (code INTEGER);\nINSERT INTO shop VALUES ('007');\nSELECT code, typeof(code) FROM shop;\n-- 7 | integer\n```\n\n反过来，往 INTEGER 列里存 `'abc'` 不会报错，它就原样存成文本。\n\n## 两种办法\n\n编号就是字符串，列声明成 TEXT。以后遇到看起来是数字、但不参与计算的字段，比如邮编、手机号、编号，一律用 TEXT。\n\n另一个办法是 3.37 以后支持的 STRICT 表，类型对不上直接报错：\n\n```sql\nCREATE TABLE shop (code TEXT NOT NULL, floor INTEGER) STRICT;\nINSERT INTO shop VALUES ('007', 'abc');\n-- 报错：cannot store TEXT value in INTEGER column shop.floor\n```\n\nSTRICT 表的列类型只能是 INT、INTEGER、REAL、TEXT、BLOB、ANY 这几种，原来写的 `VARCHAR(20)` 之类要改掉。老版本的 SQLite 打不开带 STRICT 表的库，部署前先确认运行环境的版本。"},{"slug":"raf-layout","branch":"code","date":"2026-07-20","title":"动画循环里读 offsetHeight，布局被反复重算","sum":"在 requestAnimationFrame 里交替读写样式，浏览器每读一次就得同步布局一次。","md":"做一个列表拖拽排序，帧率只有 12fps。火焰图里全是 Layout，每个元素一次。\n\n## 读和写交替\n\n```js\nfor (const el of items) {\n  const h = el.offsetHeight;                       // 读：要最新的布局\n  el.style.transform = 'translateY(' + h + 'px)';  // 写：让布局失效\n}\n```\n\n浏览器会把样式修改攒起来，渲染时一起算。但 `offsetHeight` 要的是此刻的真实值，前面如果有还没处理的样式修改，就得立刻同步算一次布局。循环里读一次写一次，N 个元素就是 N 次布局。\n\n## 拆开\n\n```js\nconst heights = items.map(el => el.offsetHeight);  // 先一次读完\nitems.forEach((el, i) => {\n  el.style.transform = 'translateY(' + heights[i] + 'px)';  // 再一次写完\n});\n```\n\n改完每帧只布局一次，帧时间从 80ms 左右降到 6ms 左右。位移我也从 `top` 换成了 `transform`：transform 不触发布局，只走合成。"},{"slug":"go-rss","branch":"tinker","date":"2026-06-05","title":"Go 服务的内存占用下不来，先看哪几个数","sum":"RSS 降不下去不一定是泄漏。先分清 HeapInuse、HeapIdle 和 HeapReleased。","md":"监控里有个 Go 服务，RSS 稳在 1.8GB，流量低谷也不降。第一反应是泄漏，但 pprof 里 inuse_space 只有 300MB 左右。\n\n## 三个数\n\n`runtime.MemStats` 里最有用的是这三个：\n\n- `HeapInuse`：正在被对象使用的 span，对应 pprof 里看到的 inuse。\n- `HeapIdle`：已经没有对象、但还留在 Go 运行时手里的 span。\n- `HeapReleased`：Idle 里已经还给操作系统的那一部分。\n\n```go\nvar m runtime.MemStats\nruntime.ReadMemStats(&m)\nfmt.Println(m.HeapInuse>>20, m.HeapIdle>>20, m.HeapReleased>>20) // MB\n```\n\n`HeapIdle - HeapReleased` 是运行时手里留着没还的内存，它仍然算在 RSS 里。我这里这个差值接近 1.3GB，是一次批量任务之后留下的。\n\n运行时的后台回收会慢慢把 Idle 还给系统，速度有限，所以批量任务结束后几分钟内 RSS 不降是正常的。真正该担心的是 `HeapInuse` 一路往上涨。\n\n## 后来怎么处理\n\n批量任务本身一次读了 200 万行再处理，我改成了分批，峰值降到原来的五分之一。如果确实需要立刻归还，可以调 `debug.FreeOSMemory()`，但它会触发一次完整的 GC，我只在任务结束的位置调了一次。"}]</script>
+<script id="app">
 (function () {
 'use strict';
 
@@ -293,6 +313,8 @@ var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
 var inline = function (s) { return esc(s).replace(/`([^`]+)`/g, '<code>$1</code>'); };
 var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+/* 在 claude.ai 里打开走它自己的保存；放到 GitHub 等别处就走 GitHub 仓库 */
+var GH = !(window.claude && window.claude.use);
 
 /* ---------- 页面外壳（发布时会用同一份模板重新生成整页） ---------- */
 
@@ -318,7 +340,7 @@ var SHELL = '<div class="shell"><div class="wrap">' +
   '<footer class="foot-site"><div class="contact"><span class="k">联系我</span>' +
   '<span class="addr" id="addr">' + EMAIL + '</span>' +
   '<button class="copy" id="cp" type="button">复制</button>' +
-  '<a href="mailto:' + EMAIL + '">写邮件</a></div>' +
+  '<a href="mailto:' + EMAIL + '">写邮件</a>' + (GH ? '<a href="#write">管理</a>' : '') + '</div>' +
   '<div class="copyr" id="foot"></div></footer>' +
   '</div></div><div id="bar" hidden></div>';
 
@@ -360,7 +382,9 @@ function codeHTML(lang, src, cap) {
     '<pre><code>' + hl(lang, src) + '</code></pre></figure>';
 }
 
-/* 正文写法：## 小标题；空行分段；- 列表；```语言 围起来的是代码；`行内代码` */
+/* 正文写法：## 小标题；空行分段；- 列表；```语言 围起来的是代码；`行内代码`
+   图片：!img:资源ID|说明　视频：!video:资源ID|说明　附件：!file:资源ID|文件名|字节数（编辑器的按钮会自动写入） */
+var MEDIA = /^!(img|video|file):([A-Za-z0-9]{32}|uploads\/[A-Za-z0-9._-]+)((?:\|[^\n]*)?)\s*$/;
 var CJK = /[　-鿿＀-￯]/;
 function joinLines(a, b) { return (CJK.test(a.slice(-1)) || CJK.test(b.charAt(0))) ? a + b : a + ' ' + b; }
 function parseMd(md) {
@@ -373,6 +397,9 @@ function parseMd(md) {
       while (i < n && !/^```/.test(lines[i])) { buf.push(lines[i]); i++; }
       i++;
       out.push(['code', info[0] || 'text', buf.join('\n'), info.slice(1).join(' ') || undefined]);
+    } else if (MEDIA.test(line)) {
+      var mm = line.trim().match(MEDIA), parts = (mm[3] || '').slice(1).split('|');
+      out.push(['media', mm[1], mm[2], parts[0], parts.slice(1)]); i++;
     } else if (/^##\s+/.test(line)) {
       out.push(['h', line.replace(/^##\s+/, '').trim()]); i++;
     } else if (/^[-*]\s+/.test(line)) {
@@ -383,7 +410,7 @@ function parseMd(md) {
       i++;
     } else {
       var para = '';
-      while (i < n && lines[i].trim() && !/^(```|##\s|[-*]\s)/.test(lines[i])) {
+      while (i < n && lines[i].trim() && !/^(```|##\s|[-*]\s)/.test(lines[i]) && !MEDIA.test(lines[i])) {
         para = para ? joinLines(para, lines[i].trim()) : lines[i].trim(); i++;
       }
       out.push(['p', para]);
@@ -452,7 +479,109 @@ function buildDoc(list) {
 
 var view = $('#view'), head = $('#head'), bar = $('#bar');
 var current = null, active = 'all', reveal = 0, played = false, GP = null, listY = 0, ro = null, rq = 0;
-var perm = 'pending', art = null;
+/* ---------- GitHub 模式：文章存在仓库的 posts.json，图片和附件存在 uploads/ ---------- */
+
+var ghCfg = { repo: '', branch: '', token: '' };
+(function () {
+  try { var s = JSON.parse(localStorage.getItem('gh') || 'null'); if (s && typeof s === 'object') ghCfg = Object.assign(ghCfg, s); } catch (e) {}
+  if (!ghCfg.repo) {
+    var h = location.hostname, seg = location.pathname.split('/').filter(Boolean)[0] || '';
+    if (/\.github\.io$/.test(h)) ghCfg.repo = h.split('.')[0] + '/' + (seg && !/\.html?$/i.test(seg) ? seg : h);
+  }
+})();
+function ghSave() { try { localStorage.setItem('gh', JSON.stringify(ghCfg)); } catch (e) {} }
+function ghApi(path, opt) {
+  opt = opt || {};
+  var headers = { 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + ghCfg.token, 'X-GitHub-Api-Version': '2022-11-28' };
+  if (opt.body) headers['Content-Type'] = 'application/json';
+  return fetch('https://api.github.com' + path, { method: opt.method || 'GET', headers: headers, body: opt.body }).then(function (r) {
+    return r.json().catch(function () { return {}; }).then(function (j) {
+      if (!r.ok) { var e = new Error(j.message || String(r.status)); e.status = r.status; throw e; }
+      return j;
+    });
+  });
+}
+function ghCode(e) {
+  var s = e && e.status;
+  return s === 401 ? 'gh_auth' : (s === 403 || s === 404) ? 'gh_perm' : (s === 409 || s === 422) ? 'gh_conflict' : 'upstream_error';
+}
+function ghCheck() {
+  return ghApi('/repos/' + ghCfg.repo).then(function (j) {
+    ghCfg.branch = j.default_branch || 'main';
+    return j.permissions ? !!(j.permissions.push || j.permissions.admin) : true;
+  });
+}
+function b64(s) { return btoa(unescape(encodeURIComponent(s))); }
+function ghPut(path, content, message, fresh) {
+  var url = '/repos/' + ghCfg.repo + '/contents/' + path.split('/').map(encodeURIComponent).join('/');
+  var sha = fresh ? Promise.resolve(null)
+    : ghApi(url + '?ref=' + encodeURIComponent(ghCfg.branch)).then(function (j) { return j.sha || null; }, function (e) { if (e.status === 404) return null; throw e; });
+  return sha.then(function (s) {
+    var body = { message: message, content: content, branch: ghCfg.branch };
+    if (s) body.sha = s;
+    return ghApi(url, { method: 'PUT', body: JSON.stringify(body) });
+  });
+}
+function fileB64(f) {
+  return new Promise(function (res, rej) {
+    var r = new FileReader();
+    r.onload = function () { res(String(r.result).split(',')[1] || ''); };
+    r.onerror = function () { rej(new Error('read')); };
+    r.readAsDataURL(f);
+  });
+}
+var IMG_EXT = { png: 1, jpg: 1, jpeg: 1, gif: 1, webp: 1, svg: 1, avif: 1 }, VID_EXT = { mp4: 1, webm: 1 };
+function ghUploader(f) {
+  if (f.size > 25 * 1048576) return Promise.reject({ code: 'too_large' });
+  var ext = ((f.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 8)) || 'bin';
+  var path = 'uploads/' + Date.now().toString(36) + '.' + ext;
+  var kind = IMG_EXT[ext] ? 'img' : VID_EXT[ext] ? 'video' : 'file';
+  return fileB64(f).then(function (c) { return ghPut(path, c, '上传 ' + f.name.slice(0, 60), true); })
+    .then(function () { return { id: path, kind: kind, size: f.size }; }, function (e) { throw { code: e && e.code || ghCode(e) }; });
+}
+function artUploader(f) {
+  var ext = (f.name.split('.').pop() || '').toLowerCase(), T = UP_TYPES[ext];
+  if (!T) return Promise.reject({ code: 'unsupported_ext' });
+  return assetsApi.upload(f, { type: T[0] }).then(function (r) { return { id: r.id, kind: T[1], size: r.sizeBytes }; });
+}
+function getUploader() { return GH ? ghUploader : assetsApi ? artUploader : null; }
+
+function setupHTML() {
+  return '<div class="editor"><a class="back" href="#">文章列表</a><h1>登录后写文章</h1>' +
+    '<p class="dek" style="margin-bottom:22px">这个站点放在 GitHub 上，文章会直接提交到你的仓库。要用一个只管这个仓库的访问令牌登录，它只保存在这台设备的浏览器里。</p>' +
+    (ghErr ? '<p class="status" style="color:var(--l2);margin:0 0 18px">' + esc(ghErr) + '</p>' : '') +
+    '<div class="field"><label for="g-repo">仓库（用户名/仓库名）</label><input id="g-repo" type="text" autocomplete="off" spellcheck="false" placeholder="例如 langrain/blog"></div>' +
+    '<div class="field"><label for="g-tok">访问令牌</label><input id="g-tok" type="password" autocomplete="off" spellcheck="false"></div>' +
+    '<div class="actions"><button class="btn primary" type="button" id="g-go">登录</button><span class="status" id="st" role="status"></span></div>' +
+    '<ol class="hint" style="margin-top:28px;padding-left:1.3em"><li>打开 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener" style="color:var(--accent)">GitHub 的新建令牌页面</a>，名字随便起，有效期选 90 天以内。</li>' +
+    '<li>“Repository access”选“Only select repositories”，只勾这个站点的仓库。</li>' +
+    '<li>“Repository permissions”里把“Contents”设为“Read and write”，其余不用动。</li>' +
+    '<li>点“Generate token”，把生成的令牌粘贴到上面。令牌过期后重新生成一个就行。</li></ol></div>';
+}
+function mountSetup() {
+  var r = $('#g-repo'), t = $('#g-tok'), go = $('#g-go'), st = $('#st');
+  r.value = ghCfg.repo || '';
+  var run = function () {
+    var repo = r.value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/+$/, ''), tok = t.value.trim();
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { st.textContent = '仓库要写成 用户名/仓库名。'; r.focus(); return; }
+    if (!tok) { st.textContent = '还没填令牌。'; t.focus(); return; }
+    go.disabled = true; st.textContent = '正在验证…';
+    ghCfg.repo = repo; ghCfg.token = tok;
+    ghCheck().then(function (ok) {
+      if (ok) { perm = 'yes'; ghErr = ''; ghSave(); route(); return; }
+      ghCfg.token = ''; perm = 'setup';
+      ghErr = '这个令牌对 ' + repo + ' 没有写入权限。请确认勾选了这个仓库，并且 Contents 是 Read and write。'; route();
+    }, function (e) {
+      ghCfg.token = ''; perm = 'setup';
+      ghErr = e.status === 401 ? '令牌无效或已过期。' : e.status === 404 ? '找不到仓库 ' + repo + '，或这个令牌没有访问它的权限。' : '连不上 GitHub，稍后再试。';
+      route();
+    });
+  };
+  go.addEventListener('click', run);
+  t.addEventListener('keydown', function (e) { if (e.key === 'Enter') run(); });
+}
+
+var perm = (GH && !ghCfg.token) ? 'setup' : 'pending', art = null, assetsApi = null, ghErr = '';
 
 /* ---------- 首页 ---------- */
 
@@ -615,12 +744,33 @@ function mountHome() {
 
 /* ---------- 文章页 ---------- */
 
+function sizeText(b) {
+  b = +b; if (!b) return '';
+  return b < 1048576 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toFixed(1) + ' MB';
+}
+function mediaHTML(x) {
+  var url = /^uploads\//.test(x[2]) ? x[2] : '/_blob/' + x[2], kind = x[1], cap = x[3] || '';
+  if (kind === 'img') {
+    return '<figure class="media"><img src="' + url + '" alt="' + esc(cap).replace(/"/g, '&quot;') + '" loading="lazy">' +
+      (cap ? '<figcaption>' + esc(cap) + '</figcaption>' : '') + '</figure>';
+  }
+  if (kind === 'video') {
+    return '<figure class="media"><video src="' + url + '" controls preload="metadata" playsinline></video>' +
+      (cap ? '<figcaption>' + esc(cap) + '</figcaption>' : '') + '</figure>';
+  }
+  var name = cap || '附件', size = sizeText(x[4] && x[4][0]);
+  return '<a class="att" href="' + url + '" target="_blank" rel="noopener">' +
+    '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 2.5h5.5L14 6v9a.5.5 0 0 1-.5.5h-8.5A.5.5 0 0 1 4.5 15V3a.5.5 0 0 1 .5-.5z M10.5 2.5V6H14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>' +
+    '<span class="an">' + esc(name) + '</span>' + (size ? '<span class="as">' + size + '</span>' : '') + '</a>';
+}
+
 function bodyHTML(body) {
   var n = 0, toc = [];
   var html = body.map(function (x) {
     if (x[0] === 'h') { n++; toc.push(x[1]); return '<h2 id="s' + n + '">' + esc(x[1]) + '</h2>'; }
     if (x[0] === 'p') return '<p>' + inline(x[1]) + '</p>';
     if (x[0] === 'ul') return '<ul>' + x[1].map(function (t) { return '<li>' + inline(t) + '</li>'; }).join('') + '</ul>';
+    if (x[0] === 'media') return mediaHTML(x);
     return codeHTML(x[1], x[2], x[3]);
   }).join('');
   return { html: html, toc: toc };
@@ -687,6 +837,7 @@ function today() {
 }
 
 function editorHTML(i) {
+  if (GH && (perm === 'setup' || perm === 'no')) return setupHTML();
   if (perm === 'pending') return '<div class="editor"><p class="ed-note">正在确认你的权限…</p></div>';
   if (perm !== 'yes') {
     return '<div class="editor"><a class="back" href="#">文章列表</a>' +
@@ -696,18 +847,42 @@ function editorHTML(i) {
   var opts = Object.keys(BR).map(function (k) { return '<option value="' + k + '">' + BR[k].name + '</option>'; }).join('');
   return '<div class="editor"><a class="back" href="#"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M9 2.5 4.5 7 9 11.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>文章列表</a>' +
     '<h1>' + (p ? '修改文章' : '写文章') + '</h1>' +
+    (GH ? '<p class="hint" style="margin-top:-14px"><button class="edit-l" id="b-out" type="button">退出登录（' + esc(ghCfg.repo) + '）</button></p>' : '') +
     '<div class="field"><label for="f-title">标题</label><input id="f-title" type="text" autocomplete="off"></div>' +
     '<div class="row2"><div class="field"><label for="f-br">分类</label><select id="f-br">' + opts + '</select></div>' +
     '<div class="field"><label for="f-date">日期</label><input id="f-date" type="date"></div></div>' +
     '<div class="field"><label for="f-sum">摘要（不填就取正文开头）</label><input id="f-sum" type="text" autocomplete="off"></div>' +
-    '<div class="field"><div class="tabs"><button class="tab" type="button" id="t-w" aria-pressed="true">写</button><button class="tab" type="button" id="t-p" aria-pressed="false">预览</button></div>' +
+    '<div class="field"><div class="tabs"><button class="tab" type="button" id="t-w" aria-pressed="true">写</button><button class="tab" type="button" id="t-p" aria-pressed="false">预览</button>' +
+    (getUploader() ? '<span class="grow"></span><button class="btn small" type="button" id="b-up">插入图片或附件</button><input type="file" id="f-file" hidden>' : '') + '</div>' +
     '<textarea id="f-md" spellcheck="false" aria-label="正文"></textarea><div class="pv prose" id="f-pv" hidden></div></div>' +
-    '<p class="hint"><code>## 小标题</code>　空行分段　<code>- </code>开头是列表　<code>`行内代码`</code>　三个反引号加语言名围起来是代码块，比如 <code>```sql</code></p>' +
+    '<p class="hint"><code>## 小标题</code>　空行分段　<code>- </code>开头是列表　<code>`行内代码`</code>　三个反引号加语言名围起来是代码块，比如 <code>```sql</code>　图片、视频、PDF 等点右上角的“插入图片或附件”，单个文件最大 20 MB</p>' +
     '<div class="actions"><button class="btn primary" type="button" id="b-pub">' + (p ? '保存修改' : '发布') + '</button>' +
     (p ? '<button class="btn danger" type="button" id="b-del">删除这篇</button>' : '') +
     '<span class="status" id="st" role="status"></span></div></div>';
 }
 
+var UP_TYPES = {
+  png: ['image/png', 'img'], jpg: ['image/jpeg', 'img'], jpeg: ['image/jpeg', 'img'], gif: ['image/gif', 'img'],
+  webp: ['image/webp', 'img'], svg: ['image/svg+xml', 'img'],
+  mp4: ['video/mp4', 'video'], webm: ['video/webm', 'video'],
+  pdf: ['application/pdf', 'file'], csv: ['text/csv', 'file'], md: ['text/markdown', 'file'],
+  json: ['application/json', 'file'], txt: ['text/plain', 'file']
+};
+function upErr(e) {
+  switch (e && e.code) {
+    case 'too_large': return '文件太大。图片、视频、PDF 上限 20 MB，SVG 上限 2 MB。';
+    case 'unsupported_type': return '这个文件的格式不被接受，或者内容和扩展名对不上。';
+    case 'quota_or_state': return '这个页面的存储空间用完了，先换小一点的文件。';
+    case 'rate_limited': return '上传太频繁了，过一会再试。';
+    case 'invalid_request': return '文件是空的，或者文本文件不是 UTF-8 编码。';
+    case 'not_granted': case 'capability_disabled': case 'capability_removed': return '这里现在不能上传文件。';
+    case 'unsupported_ext': return '这种格式暂时不能上传。支持图片、mp4/webm 视频、PDF、csv、md、json、txt。';
+    case 'gh_auth': return '令牌无效或已过期，请退出登录后重新登录。';
+    case 'gh_perm': return '这个令牌没有仓库的写入权限，请退出登录后重新生成。';
+    case 'gh_conflict': return '仓库里的文件刚被别处改过，刷新页面后再试。';
+    default: return '上传失败，稍后再试一次。';
+  }
+}
 function errMsg(e) {
   switch (e && e.code) {
     case 'conflict': return '页面刚刚被更新过，正在刷新。草稿还在，刷新后再点一次。';
@@ -717,16 +892,21 @@ function errMsg(e) {
     case 'too_large': return '页面超过了大小上限，先删掉一些旧文章再发。';
     case 'rate_limited': return '发布太频繁了，过一会再试。';
     case 'invalid_content': return '内容格式不对，没有发布。';
+    case 'gh_auth': return '令牌无效或已过期，请退出登录后重新登录。';
+    case 'gh_perm': return '这个令牌没有仓库的写入权限，请退出登录后重新生成。';
+    case 'gh_conflict': return '仓库里的文章刚被别处改过，刷新页面后再试。';
     default: return '发布失败，稍后再试一次。';
   }
 }
 
 function mountEditor(i) {
-  if (perm !== 'yes') return;
+  if (perm !== 'yes') { if (GH && perm !== 'pending') mountSetup(); return; }
   var p = i >= 0 ? POSTS[i] : null;
   var key = 'draft:' + (p ? p.slug : 'new');
   var F = { t: $('#f-title'), b: $('#f-br'), d: $('#f-date'), s: $('#f-sum'), m: $('#f-md') };
   var st = $('#st'), pub = $('#b-pub'), del = $('#b-del');
+  var out = $('#b-out');
+  if (out) out.addEventListener('click', function () { ghCfg.token = ''; ghSave(); perm = 'setup'; ghErr = ''; route(); });
   var init = p ? { title: p.title, branch: p.branch, date: p.date, sum: p.sum, md: p.md }
                : { title: '', branch: 'life', date: today(), sum: '', md: '' };
   var draft = null;
@@ -752,9 +932,41 @@ function mountEditor(i) {
   tw.addEventListener('click', function () { tab(false); });
   tp.addEventListener('click', function () { tab(true); });
 
+  var up = $('#b-up'), fi = $('#f-file');
+  if (up && fi) {
+    up.addEventListener('click', function () { fi.click(); });
+    fi.addEventListener('change', function () {
+      var f = fi.files && fi.files[0]; fi.value = '';
+      if (!f) return;
+      up.disabled = true; st.textContent = '正在上传 ' + f.name + '…';
+      getUploader()(f).then(function (r) {
+        var cap = f.name.replace(/\.[^.]+$/, '').replace(/[|\n]/g, ' ').trim();
+        var line = r.kind === 'file' ? '!file:' + r.id + '|' + f.name.replace(/[|\n]/g, ' ') + '|' + r.size
+                 : '!' + r.kind + ':' + r.id + '|' + cap;
+        var v = F.m.value, pos = F.m.selectionStart == null ? v.length : F.m.selectionStart;
+        var before = v.slice(0, pos).replace(/\s*$/, ''), after = v.slice(pos).replace(/^\s*/, '');
+        F.m.value = (before ? before + '\n\n' : '') + line + '\n\n' + after;
+        F.m.hidden = false; pv.hidden = true; tw.setAttribute('aria-pressed', 'true'); tp.setAttribute('aria-pressed', 'false');
+        saveDraft();
+        st.textContent = '已上传，插入到正文里了。图片的说明可以直接改“|”后面的字。发布后才会对读者显示。';
+      }, function (e) { st.textContent = upErr(e); }).then(function () { up.disabled = false; });
+    });
+  }
+
   function save(next, goto, btn) {
     pub.disabled = true; if (del) del.disabled = true;
     st.textContent = '正在发布…';
+    if (GH) {
+      ghPut('posts.json', b64(JSON.stringify(next, null, 1)), '更新文章').then(function () {
+        POSTS = next.map(function (q) { return prep(Object.assign({}, q)); });
+        try { localStorage.removeItem(key); } catch (e) {}
+        if (decodeURIComponent(location.hash.slice(1)) === goto) route(); else location.hash = goto;
+      }, function (e) {
+        pub.disabled = false; if (del) del.disabled = false;
+        st.textContent = errMsg({ code: ghCode(e) });
+      });
+      return;
+    }
     try { sessionStorage.setItem('goto', goto); sessionStorage.setItem('clear', key); } catch (e) {}
     art.publish(buildDoc(next)).then(function () {
       st.textContent = '已发布，正在刷新…';
@@ -803,9 +1015,19 @@ function applyPerm() {
   $$('[data-edit]').forEach(function (el) { el.hidden = perm !== 'yes'; });
 }
 function initCaps() {
-  if (!(window.claude && window.claude.use)) { perm = 'no'; return Promise.resolve(); }
-  return Promise.all([window.claude.use('artifact'), window.claude.use('user')]).then(function (r) {
-    art = r[0];
+  if (GH) {
+    if (!ghCfg.token || !ghCfg.repo) { perm = 'setup'; return Promise.resolve(); }
+    return ghCheck().then(function (ok) {
+      perm = ok ? 'yes' : 'no';
+      if (!ok) ghErr = '这个令牌对 ' + ghCfg.repo + ' 没有写入权限。';
+    }, function (e) {
+      perm = 'no';
+      ghErr = e.status === 401 ? '令牌无效或已过期，请重新登录。' : e.status === 404 ? '找不到仓库 ' + ghCfg.repo + '，或令牌没有访问它的权限。' : '连不上 GitHub，稍后再试。';
+    });
+  }
+  var optional = function (n) { return window.claude.use(n).then(function (v) { return v || null; }, function () { return null; }); };
+  return Promise.all([window.claude.use('artifact'), window.claude.use('user'), optional('assets')]).then(function (r) {
+    art = r[0]; assetsApi = r[2];
     if (!art || !r[1]) { perm = 'no'; return; }
     return r[1].canEdit().then(function (v) { perm = v ? 'yes' : 'no'; });
   }).catch(function () { perm = 'no'; });
@@ -912,8 +1134,15 @@ addEventListener('hashchange', route);
 addEventListener('resize', function () { if (current === 'home' && !rq) rq = requestAnimationFrame(function () { rq = 0; drawGraph(); }); });
 route();
 initCaps().then(function () { applyPerm(); if (current === 'edit') route(); });
+if (GH) {
+  /* 仓库里有 posts.json 就以它为准（读者看到的是它），没有就用页面里自带的这一份 */
+  fetch('posts.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) { if (Array.isArray(j)) { POSTS = j.map(prep); current = null; route(); } }, function () {});
+}
 if (document.fonts && document.fonts.ready) {
   document.fonts.ready.then(function () { if (current === 'home') drawGraph(); });
 }
 })();
-</script></body></html>
+</script>
+
+</body></html>
