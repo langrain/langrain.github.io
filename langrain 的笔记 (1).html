@@ -1,0 +1,919 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>langrain 的笔记</title><meta name="claude:viewport-fit-sides" content="cover"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"><style id="site-css">
+/* 版式：顶部一句话 + 一条提交历史。文章按时间倒序排在左侧的分支图旁边，分支对应主题（日常 / 编程 / 折腾）。 */
+:root {
+  --bg: #EEF0ED;
+  --ink: #1B221F;
+  --muted: #66706A;
+  --line: #CBD1CB;
+  --accent: #2B45C8;
+  --l0: #5F6B65;
+  --l1: #2B45C8;
+  --l2: #C2470F;
+  --l3: #0E8466;
+  --code-bg: #E3E7E2;
+  --code-ink: #1B221F;
+  --code-cmt: #76807A;
+  --code-str: #9A3A12;
+  --f-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  --f-serif: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --measure: 42rem;
+  --rail-pad: 88px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141917;
+    --ink: #E1E7E3;
+    --muted: #8C9791;
+    --line: #2D3632;
+    --accent: #8CA0FF;
+    --l0: #9AA69F;
+    --l1: #8CA0FF;
+    --l2: #F29559;
+    --l3: #42CDA4;
+    --code-bg: #1B2220;
+    --code-ink: #E1E7E3;
+    --code-cmt: #7E8984;
+    --code-str: #F0A97C;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141917;
+  --ink: #E1E7E3;
+  --muted: #8C9791;
+  --line: #2D3632;
+  --accent: #8CA0FF;
+  --l0: #9AA69F;
+  --l1: #8CA0FF;
+  --l2: #F29559;
+  --l3: #42CDA4;
+  --code-bg: #1B2220;
+  --code-ink: #E1E7E3;
+  --code-cmt: #7E8984;
+  --code-str: #F0A97C;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.7 var(--f-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .3s, color .3s;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+::selection { background: color-mix(in srgb, var(--accent) 28%, transparent); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+button { font: inherit; color: inherit; }
+
+.shell {
+  padding-block: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: clip;
+}
+.wrap { max-width: 56rem; margin: 0 auto; }
+
+/* 顶栏 */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 12;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; background: var(--bg);
+  border-bottom: 1px solid transparent;
+  transition: border-color .25s, background-color .3s;
+}
+.top.stuck { border-bottom-color: var(--line); }
+.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font: 700 17px/1 var(--f-serif); }
+.brand svg rect { transition: transform .3s cubic-bezier(.3,1.5,.5,1); transform-box: fill-box; transform-origin: 50% 100%; }
+.brand:hover svg rect:nth-child(1) { transform: scaleY(.7); }
+.brand:hover svg rect:nth-child(2) { transform: scaleY(1.3); }
+.brand:hover svg rect:nth-child(3) { transform: scaleY(.85); }
+.nav { display: flex; align-items: center; gap: 20px; }
+.nav a { text-decoration: none; font-size: 14.5px; color: var(--muted); transition: color .2s; }
+.nav a:hover { color: var(--ink); }
+.nav a.wlink { padding: 3px 12px; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; font-size: 13.5px; transition: background-color .2s, color .2s; }
+.nav a.wlink:hover { background: var(--accent); color: var(--bg); }
+.theme {
+  width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer;
+  background: transparent; border: 1px solid var(--line); border-radius: 6px; color: var(--muted);
+  transition: color .2s, border-color .2s;
+}
+.theme:hover { color: var(--ink); border-color: var(--muted); }
+.theme svg { transition: transform .5s cubic-bezier(.3,1.4,.5,1); }
+.theme.flip svg { transform: rotate(180deg); }
+
+/* 进场 */
+#view.enter { animation: enter .4s cubic-bezier(.2,.7,.2,1); }
+@keyframes enter { from { opacity: 0; transform: translateY(10px); } }
+
+/* 首页 */
+.intro { padding: 56px 0 8px; }
+.lede {
+  margin: 0; max-width: 22em;
+  font: 700 clamp(1.65rem, 4.6vw, 2.5rem)/1.38 var(--f-serif);
+  letter-spacing: -.01em; text-wrap: balance;
+}
+.sub { margin: 18px 0 0; max-width: 36em; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  padding: 6px 13px; font-size: 14px; line-height: 1.4;
+  background: transparent; border: 1px solid var(--line); border-radius: 999px;
+  transition: background-color .2s, color .2s, border-color .2s;
+}
+.chip:hover { border-color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip .n { font: 12px/1 var(--f-mono); opacity: .6; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex: none; }
+
+.log { position: relative; margin-top: 36px; }
+.commits { list-style: none; margin: 0; padding: 18px 0 0; position: relative; }
+#graph { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+.commit {
+  position: relative; padding: 0 0 46px var(--rail-pad);
+  transition: opacity .35s;
+}
+.commit.dim { opacity: .32; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; min-height: 22px; font: 12.5px/1.2 var(--f-mono); color: var(--muted); }
+.br { display: inline-flex; align-items: center; gap: 6px; font: 13px/1.2 var(--f-sans); color: var(--ink); }
+.headb { padding: 2px 6px; border: 1px solid var(--accent); border-radius: 4px; color: var(--accent); font-size: 11px; }
+.commit h2 {
+  margin: 10px 0 8px; font: 700 clamp(1.2rem, 2.6vw, 1.5rem)/1.45 var(--f-serif);
+  text-wrap: balance; transition: transform .25s cubic-bezier(.2,.7,.2,1);
+}
+.commit:hover h2 { transform: translateX(4px); }
+.commit h2 a {
+  text-decoration: none; padding-bottom: 2px;
+  background: linear-gradient(var(--c), var(--c)) 0 100% / 0 2px no-repeat;
+  transition: background-size .35s cubic-bezier(.2,.7,.2,1);
+}
+.commit:hover h2 a, .commit h2 a:focus-visible { background-size: 100% 2px; }
+.commit h2 a::after { content: ""; position: absolute; inset: 0; }
+.sum { margin: 0; max-width: 38em; font-size: 15px; color: var(--muted); }
+.foot { margin: 10px 0 0; font: 12px/1 var(--f-mono); color: var(--muted); }
+.empty { padding: 40px 0 60px var(--rail-pad); color: var(--muted); }
+.empty a { color: var(--accent); }
+
+/* 分支图 */
+.gp { fill: none; stroke-width: 2; stroke-linecap: round; stroke-dasharray: .1 6; opacity: .45; }
+.p { fill: none; stroke-width: 2; stroke-linecap: round; }
+.gnode { fill: none; stroke-width: 1.5; opacity: .4; }
+.node {
+  fill: var(--bg); stroke-width: 2;
+  transform-box: fill-box; transform-origin: center; transform: scale(.4); opacity: 0;
+  transition: transform .4s cubic-bezier(.3,1.6,.5,1), opacity .2s;
+}
+.node.on { transform: scale(1); opacity: 1; }
+.node.on.hot { transform: scale(1.4); }
+.pulse { fill: none; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: pulse 2.6s ease-out infinite; }
+@keyframes pulse { 0% { transform: scale(1); opacity: .7; } 70%, 100% { transform: scale(2.6); opacity: 0; } }
+#graph [data-b] { transition: opacity .35s; }
+#graph [data-b].dim { opacity: .14; }
+
+.about { margin-top: 8px; padding: 40px 0 8px var(--rail-pad); border-top: 1px solid var(--line); scroll-margin-top: 72px; }
+.about h2 { margin: 0 0 14px; font: 700 1.25rem/1.4 var(--f-serif); }
+.about p { margin: 0 0 12px; max-width: 36em; }
+
+.foot-site { margin-top: 40px; padding: 26px 0 64px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.contact { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.contact .k { font-size: 14px; color: var(--muted); }
+.contact .addr { font: 14px/1.6 var(--f-mono); overflow-wrap: anywhere; }
+.contact a { font-size: 14px; color: var(--muted); }
+.contact a:hover { color: var(--ink); }
+.copyr { font: 12px/1.6 var(--f-mono); color: var(--muted); }
+
+/* 文章 */
+#bar { position: fixed; left: 0; right: 0; top: env(safe-area-inset-top, 0px); height: 2px; z-index: 20; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+.post { position: relative; max-width: var(--measure); margin: 0 auto; padding: 36px 0 24px; }
+.toprow { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.back, .edit-l { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); text-decoration: none; transition: color .2s; }
+.back:hover, .edit-l:hover { color: var(--ink); }
+.back svg { transition: transform .25s; }
+.back:hover svg { transform: translateX(-3px); }
+.post .meta { margin-top: 28px; }
+.post h1 { margin: 14px 0 14px; font: 700 clamp(1.7rem, 4.6vw, 2.4rem)/1.35 var(--f-serif); text-wrap: balance; }
+.dek { margin: 0; color: var(--muted); }
+.prose { margin-top: 40px; font: 17.5px/1.95 var(--f-serif); }
+.prose p { margin: 0 0 1.3em; }
+.prose h2 { margin: 2.1em 0 .7em; font: 700 1.3rem/1.5 var(--f-serif); scroll-margin-top: 84px; }
+.prose ul { margin: 0 0 1.3em; padding-left: 1.3em; }
+.prose li { margin: .4em 0; }
+.prose code { padding: .1em .38em; background: var(--code-bg); border-radius: 4px; font: .84em var(--f-mono); overflow-wrap: anywhere; }
+.code { margin: 1.6em 0; background: var(--code-bg); border-radius: 6px; overflow: hidden; font-family: var(--f-sans); }
+.code figcaption { display: flex; align-items: center; justify-content: space-between; padding: 5px 8px 5px 14px; border-bottom: 1px solid var(--line); font: 12px/1.6 var(--f-mono); color: var(--muted); }
+.copy { cursor: pointer; padding: 2px 9px; background: transparent; border: 1px solid transparent; border-radius: 4px; font: 12px/1.6 var(--f-sans); color: var(--muted); transition: color .2s, border-color .2s, background-color .2s; }
+.copy:hover { color: var(--ink); border-color: var(--line); }
+.copy.ok { color: var(--bg); background: var(--l3); border-color: var(--l3); }
+.code pre { margin: 0; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.7 var(--f-mono); color: var(--code-ink); tab-size: 4; }
+.cmt { color: var(--code-cmt); }
+.str { color: var(--code-str); }
+
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); }
+.pg { display: block; padding: 6px 0; text-decoration: none; }
+.pg small { display: block; font: 12px/1.8 var(--f-mono); color: var(--muted); }
+.pg b { font: 600 16px/1.5 var(--f-serif); background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .3s; }
+.pg:hover b { background-size: 100% 1px; }
+.pg.next { text-align: right; }
+.pg.next b { background-position: 100% 100%; }
+
+.toc { display: none; }
+@media (min-width: 1240px) {
+  .toc { display: block; position: absolute; left: calc(100% + 48px); top: 0; bottom: 0; width: 190px; }
+  .toc nav { position: sticky; top: 96px; }
+  .toc ul { margin: 0; padding: 0; list-style: none; border-left: 1px solid var(--line); }
+  .toc button {
+    display: block; width: 100%; margin-left: -1px; padding: 6px 0 6px 14px; text-align: left; cursor: pointer;
+    background: none; border: 0; border-left: 2px solid transparent;
+    font-size: 13px; line-height: 1.5; color: var(--muted);
+    transition: color .2s, border-color .2s;
+  }
+  .toc button:hover { color: var(--ink); }
+  .toc li.on button { color: var(--ink); border-left-color: var(--accent); }
+}
+
+/* 编辑器（只有页面所有者能看到） */
+.editor { max-width: var(--measure); margin: 0 auto; padding: 36px 0 24px; }
+.editor h1 { margin: 22px 0 26px; font: 700 1.7rem/1.4 var(--f-serif); }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; min-width: 0; }
+.field label { font-size: 13px; color: var(--muted); }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 9px 12px; font: 16px/1.6 var(--f-sans); color: var(--ink);
+  background: transparent; border: 1px solid var(--line); border-radius: 6px;
+  transition: border-color .2s;
+}
+.field input:hover, .field select:hover, .field textarea:hover { border-color: var(--muted); }
+.field select option { background: var(--bg); color: var(--ink); }
+.field textarea { min-height: 24rem; resize: vertical; font: 14.5px/1.8 var(--f-mono); tab-size: 4; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+.tab { padding: 4px 12px; cursor: pointer; font-size: 14px; color: var(--muted); background: none; border: 0; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; }
+.tab[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.pv { min-height: 24rem; margin-top: 0; }
+.pv h1 { margin: 0 0 8px; font: 700 1.9rem/1.4 var(--f-serif); }
+.hint { margin: 0 0 22px; font-size: 13px; line-height: 1.9; color: var(--muted); }
+.hint code { padding: 1px 5px; background: var(--code-bg); border-radius: 4px; font: 12.5px var(--f-mono); }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.btn { cursor: pointer; padding: 9px 20px; font-size: 15px; line-height: 1.4; background: transparent; border: 1px solid var(--line); border-radius: 6px; transition: background-color .2s, color .2s, border-color .2s, opacity .2s; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn.primary:hover { opacity: .88; }
+.btn.danger { color: var(--l2); border-color: var(--l2); }
+.btn.danger.arm { background: var(--l2); color: var(--bg); }
+.btn:disabled { opacity: .5; cursor: default; }
+.status { font-size: 14px; color: var(--muted); }
+.ed-note { padding: 48px 0; color: var(--muted); }
+
+@media (max-width: 520px) {
+  .intro { padding-top: 40px; }
+  .pager { grid-template-columns: 1fr; }
+  .pg.next { text-align: left; }
+  .pg.next b { background-position: 0 100%; }
+  .prose { font-size: 17px; }
+  .row2 { grid-template-columns: 1fr; gap: 0; }
+  .nav { gap: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style><div id="root"></div><script id="data" type="application/json">[{"slug":"p-mw63c9ue","branch":"life","date":"2026-11-07","title":"Daily life","sum":"","md":"​今天醒得比平时稍早一些。没有闹钟的催促，推开窗，微凉的空气里带着一丝秋日独有的清爽\n```Rust\nprintln!(\"2\");\n```"},{"slug":"p-mw634p9f","branch":"life","date":"2026-11-07","title":"你好","sum":"那你呢","md":"你好，我是一个\n\n## 我的天哪\n`println!(\"Hello World!)`"},{"slug":"hello","branch":"life","date":"2026-11-01","title":"这里开张了","sum":"我一直喜欢写代码。写的时候会碰到各种小问题，解决完就忘，下次又碰到。所以想有个地方记下来。","md":"我一直喜欢写代码。写的时候会碰到各种小问题，解决完就忘，下次又碰到。所以想有个地方记下来。\n\n除了代码，平时的日子也想留几笔：吃了什么、去了哪、哪天心情不错。这些以后翻起来，比代码有意思。\n\n文章没有固定的更新时间，想写了就写，写完再发。"},{"slug":"wal-checkpoint","branch":"code","date":"2026-10-18","title":"WAL 文件涨到 3GB，凶手是一个没结束的读事务","sum":"数据库本体才 200MB，旁边的 -wal 文件却一直涨。checkpoint 被一个长时间开着的读连接挡住了。","md":"服务跑了两周，数据库本体 200MB，旁边的 `app.db-wal` 却有 3GB。先说结论：有个读连接一直开着事务，checkpoint 没法越过它，WAL 只能不断往后追加，没法从头复用。\n\n## 先确认是不是 checkpoint 没跑完\n\n`PRAGMA wal_checkpoint(PASSIVE)` 返回三个数：busy、WAL 里的总页数、已经写回主库的页数。后两个差得越多，积压越多。\n\n```sql\nPRAGMA wal_checkpoint(PASSIVE);\n-- busy | log    | checkpointed\n--    0 | 786432 | 1024\n```\n\n786432 页乘以 4096 字节正好是 3GB，而写回主库的只有 1024 页。\n\n## 为什么会这样\n\nWAL 模式下，读事务开始时会记下 WAL 当时的末尾位置，之后这个读者看到的就是那一刻的快照。checkpoint 只能把这个位置之前的页写回主库，而且要等所有读者都不再依赖旧页，才能从 WAL 开头重新写。一个不结束的读事务，就把这个位置钉住了。\n\n我这里的读连接是个导出任务：用游标一行行读，中间还要调外部接口，一个事务开了十几个小时。\n\n## 处理\n\n先把导出任务停掉，再手动收一次：\n\n```sql\nPRAGMA wal_checkpoint(TRUNCATE);\n```\n\n`TRUNCATE` 会等写者和读者都让开，把所有页写回主库，再把 WAL 截成 0 字节。读者一直不走的话它会返回 busy，设了 `busy_timeout` 就等到超时。所以治本的办法是改任务：每批取 1000 行就提交，用 `WHERE id > ?` 翻页，不用长游标。\n\n还有一点。`wal_autocheckpoint` 默认是 1000 页，只在提交时尝试一次不阻塞的 checkpoint，被读者挡住就放弃，也不报错。这个问题在日志里看不到，我现在直接监控 `-wal` 文件的大小。"},{"slug":"tcp-40ms","branch":"tinker","date":"2026-09-30","title":"请求固定多出 40ms，是 Nagle 和延迟确认撞上了","sum":"一个内部服务 p50 稳定在 41ms，抓包发现客户端把一个请求拆成了两次 write。","md":"一个内部小服务，本机压测单次请求 1ms，放到测试环境 p50 却稳定在 41ms。数字这么整齐，多半不是业务慢，而是哪里有个定时器在等。\n\n## 抓包\n\n在服务端抓一次请求，用 `-ttt` 看包与包之间的间隔：\n\n```sh\ntcpdump -i eth0 -nn -ttt port 9000\n```\n\n客户端先发来 4 字节的长度头，隔了约 40ms，才发正文。这 40ms 里服务端一直没有回 ACK。\n\n## 两个机制互相等\n\n客户端是 Python，默认开着 Nagle 算法：前一个小包还没收到确认，后面的小数据就先攒着。服务端内核开着延迟确认：收到一个小包不马上 ACK，最多等 40ms（Linux 的下限），指望顺带在响应里捎上。客户端等 ACK 才发正文，服务端等正文才响应，谁都不动，直到服务端的定时器到点。\n\n## 改法\n\n根本的问题是把一条消息拆成了两次 `send`。先把长度头和正文拼在一起一次发出去，再把 `TCP_NODELAY` 打开，免得以后有人又拆开：\n\n```py\nsock = socket.create_connection((host, 9000))\nsock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)\nsock.sendall(header + body)  # 一次写完\n```\n\np50 回到了 1.3ms。Go 的 net 包默认就开着 NoDelay，所以同样的问题在 Go 写的客户端里很少见，换一种语言写客户端才碰上。"},{"slug":"systemd-timer","branch":"tinker","date":"2026-09-02","title":"把 cron 换成 systemd timer 之后","sum":"半年里 cron 任务静默失败了三次。换成 timer，日志和补跑都有地方管了。","md":"我有几个定时任务：备份数据库、清理上传目录、给自己发周报。以前都放在 crontab 里，直到有一次备份脚本因为 PATH 不对失败了，整整九天没人发现。\n\n## 一个最小的例子\n\n一个任务要两个文件，一个描述做什么，一个描述什么时候做。\n\n```ini backup.service\n[Unit]\nDescription=Backup app database\n\n[Service]\nType=oneshot\nExecStart=/usr/local/bin/backup.sh\n```\n\n```ini backup.timer\n[Unit]\nDescription=Backup app database, daily\n\n[Timer]\nOnCalendar=*-*-* 03:30:00\nPersistent=true\nRandomizedDelaySec=300\n\n[Install]\nWantedBy=timers.target\n```\n\n```sh\nsystemctl enable --now backup.timer\nsystemctl list-timers backup.timer\njournalctl -u backup.service -n 20\n```\n\n`Persistent=true` 的意思是：如果机器在 3:30 关着，开机后补跑一次。cron 没有这个行为，要靠 anacron。`list-timers` 能看到下次什么时候跑、上次什么时候跑。输出进了 journal，`journalctl -u backup.service` 就是这个任务的全部日志，不用再往文件里重定向。\n\n## 不太顺手的地方\n\n一个简单任务要写两个文件，比一行 crontab 啰嗦得多。`OnCalendar` 的语法也要学一遍，好在可以先验证再用：`systemd-analyze calendar \"Mon *-*-* 09:00\"`。失败通知默认没有，我在 `[Unit]` 里加了 `OnFailure=`，指向一个发消息的 service。"},{"slug":"sqlite-affinity","branch":"code","date":"2026-08-11","title":"往 INTEGER 列里存「007」，取出来是 7","sum":"SQLite 的列类型只是亲和性，不是约束。STRICT 表可以把类型管严。","md":"有张表的 `code` 列我声明成了 INTEGER，里面存门店编号，有些以 0 开头。导入数据之后发现，「007」变成了 7。\n\n## 发生了什么\n\nSQLite 的列类型叫类型亲和性，是建议，不是约束。INTEGER 亲和性的列遇到看起来像整数的文本，会先转成整数再存。「007」能无损地转成 7，于是就转了。\n\n```sql\nCREATE TABLE shop (code INTEGER);\nINSERT INTO shop VALUES ('007');\nSELECT code, typeof(code) FROM shop;\n-- 7 | integer\n```\n\n反过来，往 INTEGER 列里存 `'abc'` 不会报错，它就原样存成文本。\n\n## 两种办法\n\n编号就是字符串，列声明成 TEXT。以后遇到看起来是数字、但不参与计算的字段，比如邮编、手机号、编号，一律用 TEXT。\n\n另一个办法是 3.37 以后支持的 STRICT 表，类型对不上直接报错：\n\n```sql\nCREATE TABLE shop (code TEXT NOT NULL, floor INTEGER) STRICT;\nINSERT INTO shop VALUES ('007', 'abc');\n-- 报错：cannot store TEXT value in INTEGER column shop.floor\n```\n\nSTRICT 表的列类型只能是 INT、INTEGER、REAL、TEXT、BLOB、ANY 这几种，原来写的 `VARCHAR(20)` 之类要改掉。老版本的 SQLite 打不开带 STRICT 表的库，部署前先确认运行环境的版本。"},{"slug":"raf-layout","branch":"code","date":"2026-07-20","title":"动画循环里读 offsetHeight，布局被反复重算","sum":"在 requestAnimationFrame 里交替读写样式，浏览器每读一次就得同步布局一次。","md":"做一个列表拖拽排序，帧率只有 12fps。火焰图里全是 Layout，每个元素一次。\n\n## 读和写交替\n\n```js\nfor (const el of items) {\n  const h = el.offsetHeight;                       // 读：要最新的布局\n  el.style.transform = 'translateY(' + h + 'px)';  // 写：让布局失效\n}\n```\n\n浏览器会把样式修改攒起来，渲染时一起算。但 `offsetHeight` 要的是此刻的真实值，前面如果有还没处理的样式修改，就得立刻同步算一次布局。循环里读一次写一次，N 个元素就是 N 次布局。\n\n## 拆开\n\n```js\nconst heights = items.map(el => el.offsetHeight);  // 先一次读完\nitems.forEach((el, i) => {\n  el.style.transform = 'translateY(' + heights[i] + 'px)';  // 再一次写完\n});\n```\n\n改完每帧只布局一次，帧时间从 80ms 左右降到 6ms 左右。位移我也从 `top` 换成了 `transform`：transform 不触发布局，只走合成。"},{"slug":"go-rss","branch":"tinker","date":"2026-06-05","title":"Go 服务的内存占用下不来，先看哪几个数","sum":"RSS 降不下去不一定是泄漏。先分清 HeapInuse、HeapIdle 和 HeapReleased。","md":"监控里有个 Go 服务，RSS 稳在 1.8GB，流量低谷也不降。第一反应是泄漏，但 pprof 里 inuse_space 只有 300MB 左右。\n\n## 三个数\n\n`runtime.MemStats` 里最有用的是这三个：\n\n- `HeapInuse`：正在被对象使用的 span，对应 pprof 里看到的 inuse。\n- `HeapIdle`：已经没有对象、但还留在 Go 运行时手里的 span。\n- `HeapReleased`：Idle 里已经还给操作系统的那一部分。\n\n```go\nvar m runtime.MemStats\nruntime.ReadMemStats(&m)\nfmt.Println(m.HeapInuse>>20, m.HeapIdle>>20, m.HeapReleased>>20) // MB\n```\n\n`HeapIdle - HeapReleased` 是运行时手里留着没还的内存，它仍然算在 RSS 里。我这里这个差值接近 1.3GB，是一次批量任务之后留下的。\n\n运行时的后台回收会慢慢把 Idle 还给系统，速度有限，所以批量任务结束后几分钟内 RSS 不降是正常的。真正该担心的是 `HeapInuse` 一路往上涨。\n\n## 后来怎么处理\n\n批量任务本身一次读了 200 万行再处理，我改成了分批，峰值降到原来的五分之一。如果确实需要立刻归还，可以调 `debug.FreeOSMemory()`，但它会触发一次完整的 GC，我只在任务结束的位置调了一次。"}]</script><script id="app">
+(function () {
+'use strict';
+
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+var root = document.documentElement;
+var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+var inline = function (s) { return esc(s).replace(/`([^`]+)`/g, '<code>$1</code>'); };
+var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+
+/* ---------- 页面外壳（发布时会用同一份模板重新生成整页） ---------- */
+
+var PAGE_HEAD = '<title>langrain 的笔记</title>' +
+  '<meta name="claude:viewport-fit-sides" content="cover">' +
+  '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap">';
+var FALLBACK_RESET = ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}';
+var EMAIL = 'langrain001@gmail.com';
+
+var SHELL = '<div class="shell"><div class="wrap">' +
+  '<header class="top" id="head">' +
+  '<a class="brand" href="#" aria-label="langrain 的笔记，回到文章列表">' +
+  '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">' +
+  '<rect x="1" y="3" width="3.2" height="11" rx="1.6" style="fill:var(--l1)"/>' +
+  '<rect x="6.4" y="6" width="3.2" height="8" rx="1.6" style="fill:var(--l2)"/>' +
+  '<rect x="11.8" y="1" width="3.2" height="13" rx="1.6" style="fill:var(--l3)"/></svg>langrain</a>' +
+  '<nav class="nav" aria-label="站点"><a href="#">文章</a><a href="#about">关于</a>' +
+  '<a class="wlink" id="wlink" href="#write" hidden>写文章</a>' +
+  '<button class="theme" id="theme" type="button" aria-label="切换深色或浅色" title="切换深色或浅色">' +
+  '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/></svg>' +
+  '</button></nav></header>' +
+  '<main id="view"></main>' +
+  '<footer class="foot-site"><div class="contact"><span class="k">联系我</span>' +
+  '<span class="addr" id="addr">' + EMAIL + '</span>' +
+  '<button class="copy" id="cp" type="button">复制</button>' +
+  '<a href="mailto:' + EMAIL + '">写邮件</a></div>' +
+  '<div class="copyr" id="foot"></div></footer>' +
+  '</div></div><div id="bar" hidden></div>';
+
+$('#root').innerHTML = SHELL;
+
+/* ---------- 文章数据 ---------- */
+
+var BR = {
+  life:   { name: '日常', lane: 0, color: '--l0' },
+  code:   { name: '编程', lane: 1, color: '--l1' },
+  tinker: { name: '折腾', lane: 2, color: '--l2' }
+};
+var CHIPS = ['all', 'life', 'code', 'tinker'];
+
+var LANG = { sql: 'SQL', sh: 'Shell', go: 'Go', py: 'Python', js: 'JavaScript', ini: 'systemd' };
+var RES = {
+  sql: /(--.*)|('[^'\n]*'|"[^"\n]*")/g,
+  js: /(\/\/.*)|('[^'\n]*'|"[^"\n]*")/g,
+  go: /(\/\/.*)|('[^'\n]*'|"[^"\n]*")/g,
+  py: /(#.*)|('[^'\n]*'|"[^"\n]*")/g,
+  sh: /(#.*)|('[^'\n]*'|"[^"\n]*")/g,
+  ini: /(#.*)|('[^'\n]*'|"[^"\n]*")/g
+};
+function hl(lang, src) {
+  var re = RES[lang];
+  if (!re) return esc(src);
+  var out = '', last = 0, m;
+  re.lastIndex = 0;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    out += m[1] !== undefined ? '<span class="cmt">' + esc(m[1]) + '</span>' : '<span class="str">' + esc(m[2]) + '</span>';
+    last = re.lastIndex;
+  }
+  return out + esc(src.slice(last));
+}
+function codeHTML(lang, src, cap) {
+  return '<figure class="code"><figcaption><span>' + esc(cap || LANG[lang] || lang) + '</span>' +
+    '<button class="copy" type="button">复制</button></figcaption>' +
+    '<pre><code>' + hl(lang, src) + '</code></pre></figure>';
+}
+
+/* 正文写法：## 小标题；空行分段；- 列表；```语言 围起来的是代码；`行内代码` */
+var CJK = /[　-鿿＀-￯]/;
+function joinLines(a, b) { return (CJK.test(a.slice(-1)) || CJK.test(b.charAt(0))) ? a + b : a + ' ' + b; }
+function parseMd(md) {
+  var lines = String(md || '').replace(/\r\n?/g, '\n').split('\n'), n = lines.length, i = 0, out = [];
+  while (i < n) {
+    var line = lines[i];
+    if (/^```/.test(line)) {
+      var info = line.slice(3).trim().split(/\s+/), buf = [];
+      i++;
+      while (i < n && !/^```/.test(lines[i])) { buf.push(lines[i]); i++; }
+      i++;
+      out.push(['code', info[0] || 'text', buf.join('\n'), info.slice(1).join(' ') || undefined]);
+    } else if (/^##\s+/.test(line)) {
+      out.push(['h', line.replace(/^##\s+/, '').trim()]); i++;
+    } else if (/^[-*]\s+/.test(line)) {
+      var items = [];
+      while (i < n && /^[-*]\s+/.test(lines[i])) { items.push(lines[i].replace(/^[-*]\s+/, '').trim()); i++; }
+      out.push(['ul', items]);
+    } else if (!line.trim()) {
+      i++;
+    } else {
+      var para = '';
+      while (i < n && lines[i].trim() && !/^(```|##\s|[-*]\s)/.test(lines[i])) {
+        para = para ? joinLines(para, lines[i].trim()) : lines[i].trim(); i++;
+      }
+      out.push(['p', para]);
+    }
+  }
+  return out;
+}
+
+var POSTS = [];
+function prep(p) {
+  p.body = parseMd(p.md);
+  p.hash = fnv(p.slug);
+  var n = 0, c = 0;
+  p.body.forEach(function (b) {
+    if (b[0] === 'p') n += b[1].length;
+    else if (b[0] === 'ul') n += b[1].join('').length;
+    else if (b[0] === 'code') c += b[2].split('\n').length;
+  });
+  p.mins = Math.max(1, Math.round(n / 420 + c / 12));
+  if (!BR[p.branch]) p.branch = 'life';
+  if (!p.sum) {
+    var f = p.body.filter(function (b) { return b[0] === 'p'; })[0];
+    var t = f ? f[1].replace(/`/g, '') : '';
+    p.sum = t.length > 64 ? t.slice(0, 64) + '…' : t;
+  }
+  return p;
+}
+function fnv(s) {
+  var h = 2166136261;
+  for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(16).padStart(8, '0').slice(0, 7);
+}
+try { POSTS = JSON.parse($('#data').textContent).map(prep); } catch (e) { POSTS = []; }
+
+/* 要保存的只有这几项，其余都是读出来之后算的 */
+function plain(p) { return { slug: p.slug, branch: p.branch, date: p.date, title: p.title, sum: p.sum, md: p.md }; }
+function sortPosts(list) {
+  return list.map(function (p, i) { return { p: p, i: i }; })
+    .sort(function (a, b) { return a.p.date < b.p.date ? 1 : a.p.date > b.p.date ? -1 : a.i - b.i; })
+    .map(function (x) { return x.p; });
+}
+
+/* ---------- 发布：用当前内容重新生成整页 ---------- */
+
+function resetCss() {
+  var ss = $$('style', document.head);
+  for (var i = 0; i < ss.length; i++) {
+    if (ss[i].id !== 'site-css' && /\[hidden\]/.test(ss[i].textContent)) return ss[i].textContent;
+  }
+  return FALLBACK_RESET;
+}
+function buildDoc(list) {
+  var data = JSON.stringify(list).replace(/</g, '\\u003c');
+  return '<!doctype html><html><head><meta charset=utf8>' +
+    '<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">' +
+    '<style>' + resetCss() + '</style></head><body>' +
+    PAGE_HEAD +
+    '<style id="site-css">' + $('#site-css').textContent + '</style>' +
+    '<div id="root"></div>' +
+    '<script id="data" type="application/json">' + data + '<\/script>' +
+    '<script id="app">' + $('#app').textContent + '<\/script>' +
+    '</body></html>';
+}
+
+/* ---------- 状态 ---------- */
+
+var view = $('#view'), head = $('#head'), bar = $('#bar');
+var current = null, active = 'all', reveal = 0, played = false, GP = null, listY = 0, ro = null, rq = 0;
+var perm = 'pending', art = null;
+
+/* ---------- 首页 ---------- */
+
+function homeHTML() {
+  var counts = { all: POSTS.length };
+  POSTS.forEach(function (p) { counts[p.branch] = (counts[p.branch] || 0) + 1; });
+  var chips = CHIPS.map(function (k) {
+    var name = k === 'all' ? '全部' : BR[k].name;
+    var dot = k === 'all' ? '' : '<i class="dot" style="background:var(' + BR[k].color + ')"></i>';
+    return '<button class="chip" type="button" data-k="' + k + '" aria-pressed="' + (k === active) + '">' +
+      dot + name + '<span class="n">' + (counts[k] || 0) + '</span></button>';
+  }).join('');
+  var rows = POSTS.map(function (p, i) {
+    var b = BR[p.branch];
+    return '<li class="commit" data-i="' + i + '" data-b="' + p.branch + '" style="--c:var(' + b.color + ')">' +
+      '<div class="meta"><span>' + p.hash + '</span><span>' + esc(p.date) + '</span>' +
+      '<span class="br"><i class="dot" style="background:var(--c)"></i>' + b.name + '</span>' +
+      (i === 0 ? '<span class="headb">HEAD</span>' : '') + '</div>' +
+      '<h2><a href="#' + p.slug + '">' + esc(p.title) + '</a></h2>' +
+      '<p class="sum">' + esc(p.sum) + '</p>' +
+      '<p class="foot">' + p.mins + ' 分钟读完</p></li>';
+  }).join('');
+  var empty = '<li class="empty">还没有文章。<a href="#write" data-edit hidden>写第一篇</a></li>';
+  return '<section class="intro">' +
+    '<h1 class="lede">喜欢写代码，也记一点日常。</h1>' +
+    '<p class="sub">我是 langrain，热爱编程。这里放我的代码笔记，也放平时的生活。想到什么就写，写完才发。</p>' +
+    '<div class="chips" role="group" aria-label="按分类筛选">' + chips + '</div></section>' +
+    '<section class="log" id="log"><svg id="graph" aria-hidden="true"></svg>' +
+    '<ol class="commits" id="commits">' + (POSTS.length ? rows : empty) + '</ol></section>' +
+    '<section class="about" id="about"><h2>关于</h2>' +
+    '<p>我叫 langrain，热爱编程。平时写点代码，折腾点东西，也在这里分享日常。</p>' +
+    '<p>文章都是我自己写的，有想聊的可以给我写信，邮箱在页面最下面。</p></section>';
+}
+
+function drawGraph() {
+  var ol = $('#commits'), svg = $('#graph');
+  if (!ol || !svg) return;
+  var narrow = innerWidth < 520;
+  var x0 = narrow ? 10 : 12, step = narrow ? 12 : 16;
+  var W = x0 * 2 + step * 2;
+  root.style.setProperty('--rail-pad', (W + (narrow ? 14 : 24)) + 'px');
+  var H = ol.offsetHeight;
+  var lis = $$('.commit', ol);
+  var pts = lis.map(function (li, i) {
+    var m = $('.meta', li);
+    var b = POSTS[i].branch;
+    return { y: li.offsetTop + m.offsetTop + m.offsetHeight / 2, b: b, lane: BR[b].lane };
+  });
+  var X = function (l) { return x0 + l * step; };
+  var R = 22, ghost = '', live = '', nodes = '';
+
+  var trunk = 'M' + X(0) + ' 0V' + Math.max(H - 20, 0);
+  ghost += '<path class="gp" data-b="trunk" d="' + trunk + '" style="stroke:var(--l0)"/>';
+  live += '<path class="p" data-b="trunk" d="' + trunk + '" style="stroke:var(--l0)"/>';
+
+  ['code', 'tinker'].forEach(function (k) {
+    var mine = pts.filter(function (p) { return p.b === k; });
+    if (!mine.length) return;
+    var top = Math.min.apply(null, mine.map(function (p) { return p.y; }));
+    var bot = Math.max.apply(null, mine.map(function (p) { return p.y; }));
+    var x = X(BR[k].lane), tx = X(0);
+    var mt = Math.max(top - R, 2), ym = (top + mt) / 2;
+    var yb = bot + R, yf = (bot + yb) / 2;
+    var d = 'M' + x + ' ' + top + 'V' + bot +
+      'M' + tx + ' ' + yb + 'C' + tx + ' ' + yf + ' ' + x + ' ' + yf + ' ' + x + ' ' + bot +
+      'M' + x + ' ' + top + 'C' + x + ' ' + ym + ' ' + tx + ' ' + ym + ' ' + tx + ' ' + mt;
+    var st = 'stroke:var(' + BR[k].color + ')';
+    ghost += '<path class="gp" data-b="' + k + '" d="' + d + '" style="' + st + '"/>';
+    live += '<path class="p" data-b="' + k + '" d="' + d + '" style="' + st + '"/>';
+  });
+
+  pts.forEach(function (p, i) {
+    var cx = X(p.lane), col = BR[p.b].color;
+    ghost += '<circle class="gnode" data-b="' + p.b + '" cx="' + cx + '" cy="' + p.y + '" r="4" style="stroke:var(' + col + ')"/>';
+    var fill = i === 0 ? ';fill:var(' + col + ')' : '';
+    nodes += '<circle class="node" data-i="' + i + '" data-b="' + p.b + '" cx="' + cx + '" cy="' + p.y + '" r="5.5" style="stroke:var(' + col + ')' + fill + '"/>';
+    if (i === 0) nodes += '<circle class="pulse" cx="' + cx + '" cy="' + p.y + '" r="5.5" style="stroke:var(' + col + ')"/>';
+  });
+
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.innerHTML = '<defs><clipPath id="rv"><rect id="rvr" x="-30" y="0" width="' + (W + 60) + '" height="0"/></clipPath></defs>' +
+    '<g>' + ghost + '</g><g clip-path="url(#rv)">' + live + '</g><g>' + nodes + '</g>';
+  GP = { pts: pts, H: H };
+  applyFilter();
+  setReveal(reveal);
+}
+
+function setReveal(v) {
+  if (!GP) return;
+  reveal = clamp(v, 0, GP.H);
+  var r = $('#rvr');
+  if (r) r.setAttribute('height', reveal);
+  $$('#graph .node').forEach(function (n) {
+    n.classList.toggle('on', GP.pts[+n.getAttribute('data-i')].y <= reveal + 6);
+  });
+}
+function targetReveal() {
+  var log = $('#log');
+  if (!log || !GP) return 0;
+  var atEnd = innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+  if (atEnd) return GP.H;
+  return clamp(innerHeight * 0.82 - log.getBoundingClientRect().top, 0, GP.H);
+}
+function introReveal() {
+  if (reduced) { setReveal(targetReveal()); return; }
+  var t0 = performance.now(), dur = 1100;
+  (function f(now) {
+    if (current !== 'home') return;
+    var t = clamp((now - t0) / dur, 0, 1);
+    var e = 1 - Math.pow(1 - t, 3);
+    setReveal(Math.max(reveal, e * targetReveal()));
+    if (t < 1) requestAnimationFrame(f);
+  })(t0);
+}
+
+function applyFilter() {
+  $$('.commit', view).forEach(function (li) {
+    li.classList.toggle('dim', active !== 'all' && li.getAttribute('data-b') !== active);
+  });
+  $$('#graph [data-b]').forEach(function (el) {
+    var b = el.getAttribute('data-b');
+    el.classList.toggle('dim', active !== 'all' && b !== active && b !== 'trunk');
+  });
+}
+
+function hot(e, on) {
+  var li = e.target.closest && e.target.closest('.commit');
+  if (!li) return;
+  var n = $('#graph .node[data-i="' + li.getAttribute('data-i') + '"]');
+  if (n) n.classList.toggle('hot', on);
+}
+
+function mountHome() {
+  $$('.chip', view).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.getAttribute('data-k');
+      active = (active === k && k !== 'all') ? 'all' : k;
+      $$('.chip', view).forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-k') === active)); });
+      applyFilter();
+    });
+  });
+  var ol = $('#commits');
+  ol.addEventListener('mouseover', function (e) { hot(e, true); });
+  ol.addEventListener('mouseout', function (e) { hot(e, false); });
+  ol.addEventListener('focusin', function (e) { hot(e, true); });
+  ol.addEventListener('focusout', function (e) { hot(e, false); });
+  drawGraph();
+  if (!played) { played = true; reveal = 0; setReveal(0); introReveal(); }
+  else setReveal(Math.max(reveal, targetReveal()));
+  if (window.ResizeObserver) {
+    ro = new ResizeObserver(function () {
+      if (rq) return;
+      rq = requestAnimationFrame(function () { rq = 0; drawGraph(); });
+    });
+    ro.observe(ol);
+  }
+}
+
+/* ---------- 文章页 ---------- */
+
+function bodyHTML(body) {
+  var n = 0, toc = [];
+  var html = body.map(function (x) {
+    if (x[0] === 'h') { n++; toc.push(x[1]); return '<h2 id="s' + n + '">' + esc(x[1]) + '</h2>'; }
+    if (x[0] === 'p') return '<p>' + inline(x[1]) + '</p>';
+    if (x[0] === 'ul') return '<ul>' + x[1].map(function (t) { return '<li>' + inline(t) + '</li>'; }).join('') + '</ul>';
+    return codeHTML(x[1], x[2], x[3]);
+  }).join('');
+  return { html: html, toc: toc };
+}
+
+function postHTML(i) {
+  var p = POSTS[i], b = BR[p.branch];
+  var r = bodyHTML(p.body);
+  var newer = POSTS[i - 1], older = POSTS[i + 1];
+  var pg = function (q, cls, label) {
+    return q ? '<a class="pg ' + cls + '" href="#' + q.slug + '"><small>' + label + '</small><b>' + esc(q.title) + '</b></a>' : '<span></span>';
+  };
+  var tocHTML = r.toc.length ? '<aside class="toc" aria-label="本文目录"><nav><ul>' +
+    r.toc.map(function (t, k) { return '<li><button type="button" data-s="' + (k + 1) + '">' + esc(t) + '</button></li>'; }).join('') +
+    '</ul></nav></aside>' : '';
+  return '<article class="post">' + tocHTML +
+    '<div class="toprow"><a class="back" href="#"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M9 2.5 4.5 7 9 11.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>文章列表</a>' +
+    '<a class="edit-l" href="#edit-' + p.slug + '" data-edit hidden>编辑</a></div>' +
+    '<div class="meta"><span>' + p.hash + '</span><span>' + esc(p.date) + '</span>' +
+    '<span class="br"><i class="dot" style="background:var(' + b.color + ')"></i>' + b.name + '</span>' +
+    '<span>' + p.mins + ' 分钟读完</span></div>' +
+    '<h1>' + esc(p.title) + '</h1><p class="dek">' + esc(p.sum) + '</p>' +
+    '<div class="prose">' + r.html + '</div>' +
+    '<nav class="pager" aria-label="相邻文章">' + pg(newer, 'prev', '较新') + pg(older, 'next', '较旧') + '</nav></article>';
+}
+
+function copyText(btn, text, node) {
+  var reset = function () { setTimeout(function () { btn.textContent = '复制'; btn.classList.remove('ok'); }, 1400); };
+  var done = function () { btn.textContent = '已复制'; btn.classList.add('ok'); reset(); };
+  var fallback = function () {
+    var r = document.createRange(); r.selectNodeContents(node);
+    var s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    btn.textContent = '已选中'; reset();
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+  else fallback();
+}
+
+function bindCopy(scope) {
+  $$('.code .copy', scope).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var code = $('code', btn.closest('.code'));
+      copyText(btn, code.textContent, code);
+    });
+  });
+}
+
+function mountPost() {
+  bindCopy(view);
+  $$('.toc button', view).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var h = $('#s' + b.getAttribute('data-s'));
+      if (h) h.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    });
+  });
+  onScroll();
+}
+
+/* ---------- 编辑器 ---------- */
+
+function today() {
+  var d = new Date(), z = function (n) { return (n < 10 ? '0' : '') + n; };
+  return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate());
+}
+
+function editorHTML(i) {
+  if (perm === 'pending') return '<div class="editor"><p class="ed-note">正在确认你的权限…</p></div>';
+  if (perm !== 'yes') {
+    return '<div class="editor"><a class="back" href="#">文章列表</a>' +
+      '<p class="ed-note">只有这个页面的所有者才能写文章。</p></div>';
+  }
+  var p = i >= 0 ? POSTS[i] : null;
+  var opts = Object.keys(BR).map(function (k) { return '<option value="' + k + '">' + BR[k].name + '</option>'; }).join('');
+  return '<div class="editor"><a class="back" href="#"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M9 2.5 4.5 7 9 11.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>文章列表</a>' +
+    '<h1>' + (p ? '修改文章' : '写文章') + '</h1>' +
+    '<div class="field"><label for="f-title">标题</label><input id="f-title" type="text" autocomplete="off"></div>' +
+    '<div class="row2"><div class="field"><label for="f-br">分类</label><select id="f-br">' + opts + '</select></div>' +
+    '<div class="field"><label for="f-date">日期</label><input id="f-date" type="date"></div></div>' +
+    '<div class="field"><label for="f-sum">摘要（不填就取正文开头）</label><input id="f-sum" type="text" autocomplete="off"></div>' +
+    '<div class="field"><div class="tabs"><button class="tab" type="button" id="t-w" aria-pressed="true">写</button><button class="tab" type="button" id="t-p" aria-pressed="false">预览</button></div>' +
+    '<textarea id="f-md" spellcheck="false" aria-label="正文"></textarea><div class="pv prose" id="f-pv" hidden></div></div>' +
+    '<p class="hint"><code>## 小标题</code>　空行分段　<code>- </code>开头是列表　<code>`行内代码`</code>　三个反引号加语言名围起来是代码块，比如 <code>```sql</code></p>' +
+    '<div class="actions"><button class="btn primary" type="button" id="b-pub">' + (p ? '保存修改' : '发布') + '</button>' +
+    (p ? '<button class="btn danger" type="button" id="b-del">删除这篇</button>' : '') +
+    '<span class="status" id="st" role="status"></span></div></div>';
+}
+
+function errMsg(e) {
+  switch (e && e.code) {
+    case 'conflict': return '页面刚刚被更新过，正在刷新。草稿还在，刷新后再点一次。';
+    case 'not_writer': case 'not_granted': case 'consent_required': case 'capability_disabled':
+    case 'capability_removed': case 'not_declared':
+      return '这里现在不能保存。只有页面所有者在自己的页面里才能发布。';
+    case 'too_large': return '页面超过了大小上限，先删掉一些旧文章再发。';
+    case 'rate_limited': return '发布太频繁了，过一会再试。';
+    case 'invalid_content': return '内容格式不对，没有发布。';
+    default: return '发布失败，稍后再试一次。';
+  }
+}
+
+function mountEditor(i) {
+  if (perm !== 'yes') return;
+  var p = i >= 0 ? POSTS[i] : null;
+  var key = 'draft:' + (p ? p.slug : 'new');
+  var F = { t: $('#f-title'), b: $('#f-br'), d: $('#f-date'), s: $('#f-sum'), m: $('#f-md') };
+  var st = $('#st'), pub = $('#b-pub'), del = $('#b-del');
+  var init = p ? { title: p.title, branch: p.branch, date: p.date, sum: p.sum, md: p.md }
+               : { title: '', branch: 'life', date: today(), sum: '', md: '' };
+  var draft = null;
+  try { draft = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) {}
+  if (draft && typeof draft === 'object') { init = Object.assign(init, draft); st.textContent = '已恢复没发出去的草稿。'; }
+  F.t.value = init.title; F.b.value = BR[init.branch] ? init.branch : 'life'; F.d.value = init.date;
+  F.s.value = init.sum || ''; F.m.value = init.md;
+  if (p && !draft) F.s.value = (p.sum && p.sum !== autoSum(p)) ? p.sum : '';
+
+  function read() {
+    return { title: F.t.value.trim(), branch: F.b.value, date: F.d.value, sum: F.s.value.trim(), md: F.m.value.replace(/\s+$/, '') };
+  }
+  function saveDraft() { try { localStorage.setItem(key, JSON.stringify(read())); } catch (e) {} }
+  [F.t, F.b, F.d, F.s, F.m].forEach(function (el) { el.addEventListener('input', function () { saveDraft(); st.textContent = ''; }); });
+
+  var pv = $('#f-pv'), tw = $('#t-w'), tp = $('#t-p');
+  function tab(preview) {
+    tw.setAttribute('aria-pressed', String(!preview)); tp.setAttribute('aria-pressed', String(preview));
+    F.m.hidden = preview; pv.hidden = !preview;
+    if (preview) pv.innerHTML = bodyHTML(parseMd(F.m.value)).html || '<p style="color:var(--muted)">正文还是空的。</p>';
+    if (preview) bindCopy(pv);
+  }
+  tw.addEventListener('click', function () { tab(false); });
+  tp.addEventListener('click', function () { tab(true); });
+
+  function save(next, goto, btn) {
+    pub.disabled = true; if (del) del.disabled = true;
+    st.textContent = '正在发布…';
+    try { sessionStorage.setItem('goto', goto); sessionStorage.setItem('clear', key); } catch (e) {}
+    art.publish(buildDoc(next)).then(function () {
+      st.textContent = '已发布，正在刷新…';
+    }, function (e) {
+      pub.disabled = false; if (del) del.disabled = false;
+      try { sessionStorage.removeItem('goto'); sessionStorage.removeItem('clear'); } catch (_) {}
+      st.textContent = errMsg(e);
+    });
+  }
+
+  pub.addEventListener('click', function () {
+    var v = read();
+    if (!v.title) { st.textContent = '标题还没写。'; F.t.focus(); return; }
+    if (!v.md) { st.textContent = '正文还没写。'; F.m.focus(); return; }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v.date)) v.date = today();
+    var rec = { slug: p ? p.slug : 'p-' + Date.now().toString(36), branch: v.branch, date: v.date, title: v.title, sum: v.sum, md: v.md };
+    var next = POSTS.map(plain);
+    if (p) next[i] = rec; else next.unshift(rec);
+    save(sortPosts(next), rec.slug, pub);
+  });
+
+  if (del) {
+    var armed = 0;
+    del.addEventListener('click', function () {
+      if (!armed) {
+        del.textContent = '再点一次，确认删除'; del.classList.add('arm');
+        armed = setTimeout(function () { armed = 0; del.textContent = '删除这篇'; del.classList.remove('arm'); }, 4000);
+        return;
+      }
+      clearTimeout(armed);
+      var next = POSTS.map(plain).filter(function (_, k) { return k !== i; });
+      save(next, '', del);
+    });
+  }
+}
+function autoSum(p) {
+  var f = p.body.filter(function (b) { return b[0] === 'p'; })[0];
+  var t = f ? f[1].replace(/`/g, '') : '';
+  return t.length > 64 ? t.slice(0, 64) + '…' : t;
+}
+
+/* ---------- 权限 ---------- */
+
+function applyPerm() {
+  var w = $('#wlink'); if (w) w.hidden = perm !== 'yes';
+  $$('[data-edit]').forEach(function (el) { el.hidden = perm !== 'yes'; });
+}
+function initCaps() {
+  if (!(window.claude && window.claude.use)) { perm = 'no'; return Promise.resolve(); }
+  return Promise.all([window.claude.use('artifact'), window.claude.use('user')]).then(function (r) {
+    art = r[0];
+    if (!art || !r[1]) { perm = 'no'; return; }
+    return r[1].canEdit().then(function (v) { perm = v ? 'yes' : 'no'; });
+  }).catch(function () { perm = 'no'; });
+}
+
+/* ---------- 路由 ---------- */
+
+function show(kind, i) {
+  current = kind;
+  if (ro) { ro.disconnect(); ro = null; }
+  GP = null;
+  bar.hidden = kind !== 'post';
+  bar.style.transform = 'scaleX(0)';
+  view.innerHTML = kind === 'home' ? homeHTML() : kind === 'post' ? postHTML(i) : editorHTML(i);
+  view.classList.remove('enter'); void view.offsetWidth; view.classList.add('enter');
+  if (kind === 'home') mountHome(); else if (kind === 'post') mountPost(); else mountEditor(i);
+  applyPerm();
+}
+
+function route() {
+  var h = decodeURIComponent(location.hash.slice(1));
+  if (h === 'write' || h.indexOf('edit-') === 0) {
+    var es = h === 'write' ? null : h.slice(5);
+    var ei = es ? POSTS.findIndex(function (p) { return p.slug === es; }) : -1;
+    if (!es || ei >= 0) {
+      if (current === 'home') listY = window.scrollY;
+      show('edit', ei);
+      window.scrollTo(0, 0);
+      return;
+    }
+  }
+  var i = POSTS.findIndex(function (p) { return p.slug === h; });
+  if (i >= 0) {
+    if (current === 'home') listY = window.scrollY;
+    show('post', i);
+    window.scrollTo(0, 0);
+    return;
+  }
+  var wasPost = current === 'post' || current === 'edit';
+  if (current !== 'home') show('home');
+  if (h === 'about') {
+    var a = $('#about');
+    if (a) requestAnimationFrame(function () { a.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); });
+  } else if (wasPost) {
+    window.scrollTo(0, listY);
+  } else {
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+  }
+}
+
+/* ---------- 滚动 ---------- */
+
+function onScroll() {
+  head.classList.toggle('stuck', window.scrollY > 8);
+  if (current === 'home') {
+    if (played) setReveal(Math.max(reveal, targetReveal()));
+  } else if (current === 'post') {
+    var a = $('.post', view);
+    if (!a) return;
+    var r = a.getBoundingClientRect();
+    var p = clamp((-r.top) / Math.max(1, r.height - innerHeight * 0.55), 0, 1);
+    bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    var idx = -1;
+    $$('.prose h2', view).forEach(function (h, k) { if (h.getBoundingClientRect().top <= 120) idx = k; });
+    $$('.toc li', view).forEach(function (li, k) { li.classList.toggle('on', k === idx); });
+  }
+}
+var tick = false;
+addEventListener('scroll', function () {
+  if (tick) return;
+  tick = true;
+  requestAnimationFrame(function () { tick = false; onScroll(); });
+}, { passive: true });
+
+/* ---------- 主题、邮箱 ---------- */
+
+var themeBtn = $('#theme');
+function isDark() {
+  var a = root.getAttribute('data-theme');
+  return a ? a === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+}
+try {
+  var saved = localStorage.getItem('theme');
+  if (saved && !root.getAttribute('data-theme')) root.setAttribute('data-theme', saved);
+} catch (e) {}
+themeBtn.addEventListener('click', function () {
+  var next = isDark() ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  themeBtn.classList.toggle('flip');
+  try { localStorage.setItem('theme', next); } catch (e) {}
+});
+$('#cp').addEventListener('click', function () { copyText($('#cp'), EMAIL, $('#addr')); });
+
+/* ---------- 启动 ---------- */
+
+$('#foot').textContent = '© ' + new Date().getFullYear() + ' langrain';
+try {
+  var g = sessionStorage.getItem('goto');
+  var c = sessionStorage.getItem('clear');
+  if (c) { localStorage.removeItem(c); sessionStorage.removeItem('clear'); }
+  if (g !== null) { sessionStorage.removeItem('goto'); location.hash = g; }
+} catch (e) {}
+addEventListener('hashchange', route);
+addEventListener('resize', function () { if (current === 'home' && !rq) rq = requestAnimationFrame(function () { rq = 0; drawGraph(); }); });
+route();
+initCaps().then(function () { applyPerm(); if (current === 'edit') route(); });
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(function () { if (current === 'home') drawGraph(); });
+}
+})();
+</script></body></html>
