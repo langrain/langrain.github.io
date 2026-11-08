@@ -51,7 +51,7 @@
   "slug": "systemd-timer",
   "branch": "tinker",
   "date": "2026-09-02",
-  "title": "把 cron 换成 systemd timer 之后",
+  "title": "把 cron 换成 systemd timer 之后😎",
   "sum": "半年里 cron 任务静默失败了三次。换成 timer，日志和补跑都有地方管了。",
   "md": "我有几个定时任务：备份数据库、清理上传目录、给自己发周报。以前都放在 crontab 里，直到有一次备份脚本因为 PATH 不对失败了，整整九天没人发现。\n\n## 一个最小的例子\n\n一个任务要两个文件，一个描述做什么，一个描述什么时候做。\n\n```ini backup.service\n[Unit]\nDescription=Backup app database\n\n[Service]\nType=oneshot\nExecStart=/usr/local/bin/backup.sh\n```\n\n```ini backup.timer\n[Unit]\nDescription=Backup app database, daily\n\n[Timer]\nOnCalendar=*-*-* 03:30:00\nPersistent=true\nRandomizedDelaySec=300\n\n[Install]\nWantedBy=timers.target\n```\n\n```sh\nsystemctl enable --now backup.timer\nsystemctl list-timers backup.timer\njournalctl -u backup.service -n 20\n```\n\n`Persistent=true` 的意思是：如果机器在 3:30 关着，开机后补跑一次。cron 没有这个行为，要靠 anacron。`list-timers` 能看到下次什么时候跑、上次什么时候跑。输出进了 journal，`journalctl -u backup.service` 就是这个任务的全部日志，不用再往文件里重定向。\n\n## 不太顺手的地方\n\n一个简单任务要写两个文件，比一行 crontab 啰嗦得多。`OnCalendar` 的语法也要学一遍，好在可以先验证再用：`systemd-analyze calendar \"Mon *-*-* 09:00\"`。失败通知默认没有，我在 `[Unit]` 里加了 `OnFailure=`，指向一个发消息的 service。"
  },
